@@ -461,47 +461,6 @@
     20px 2px, 2px 20px;
 }
 
-/* Action Buttons */
-.new-landing .action-buttons {
-  position: fixed;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 6;
-  display: flex;
-  gap: 2rem;
-}
-
-.new-landing .action-button {
-  position: relative;
-  width: 180px;
-  height: 60px;
-  border: 2px solid hsl(var(--rose-light) / 0.6);
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  transition: all 300ms ease;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: hsl(var(--primary));
-  text-transform: uppercase;
-  font-family: var(--font-primary);
-  font-weight: 600;
-  font-size: 0.9rem;
-  letter-spacing: 1px;
-  user-select: none;
-  cursor: none;
-  text-decoration: none;
-  border-radius: 8px;
-}
-
-.new-landing .action-button:hover {
-  border-color: hsl(var(--vibrant-rose) / 0.8);
-  color: hsl(var(--vibrant-rose));
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-}
 
 /* Quote Section */
 .new-landing .quote-section {
@@ -582,47 +541,6 @@
     20px 2px, 2px 20px;
 }
 
-/* Action Buttons */
-.new-landing .action-buttons {
-  position: fixed;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 6;
-  display: flex;
-  gap: 2rem;
-}
-
-.new-landing .action-button {
-  position: relative;
-  width: 180px;
-  height: 60px;
-  border: 2px solid hsl(var(--rose-light) / 0.6);
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  transition: all 300ms ease;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: hsl(var(--primary));
-  text-transform: uppercase;
-  font-family: var(--font-primary);
-  font-weight: 600;
-  font-size: 0.9rem;
-  letter-spacing: 1px;
-  user-select: none;
-  cursor: none;
-  text-decoration: none;
-  border-radius: 8px;
-}
-
-.new-landing .action-button:hover {
-  border-color: hsl(var(--vibrant-rose) / 0.8);
-  color: hsl(var(--vibrant-rose));
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-}
 
 /* Title line animation */
 .new-landing .title-line {
@@ -654,17 +572,6 @@
     font-size: 2rem;
   }
   
-  .new-landing .action-buttons {
-    flex-direction: column;
-    gap: 1rem;
-    bottom: 1rem;
-  }
-  
-  .new-landing .action-button {
-    width: 160px;
-    height: 50px;
-    font-size: 0.8rem;
-  }
   
   .new-landing .scroll-text {
     display: none;
