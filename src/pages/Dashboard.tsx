@@ -36,12 +36,12 @@ const Dashboard = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
+          className="text-center mb-6 md:mb-8"
         >
-          <h1 className="text-5xl font-shadows text-foreground mb-2">
+          <h1 className="text-3xl md:text-5xl font-shadows text-foreground mb-2">
             Your Garden
           </h1>
-          <p className="text-xl font-caveat text-primary">
+          <p className="text-lg md:text-xl font-caveat text-primary">
             Welcome back, {mockUserData.aptosName}
           </p>
         </motion.div>
@@ -51,20 +51,20 @@ const Dashboard = () => {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
-          className="h-64 md:h-80 mb-8 relative flex items-center justify-center"
+          className="h-48 md:h-64 lg:h-80 mb-6 md:mb-8 relative flex items-center justify-center"
         >
-          <div className="text-center space-y-4">
+          <div className="text-center space-y-3 md:space-y-4">
             <motion.div
               animate={{ rotate: [0, 360] }}
               transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-              className="text-8xl mb-4"
+              className="text-5xl md:text-6xl lg:text-8xl mb-3 md:mb-4"
             >
               🌻
             </motion.div>
-            <p className="text-lg font-caveat text-primary">
+            <p className="text-base md:text-lg font-caveat text-primary px-4">
               Your personal garden grows with every donation
             </p>
-            <div className="flex items-center justify-center space-x-6 text-sm text-muted-foreground">
+            <div className="flex flex-col md:flex-row items-center justify-center space-y-2 md:space-y-0 md:space-x-6 text-xs md:text-sm text-muted-foreground">
               <div className="flex items-center space-x-1">
                 <span>🌱</span>
                 <span>{mockUserData.donationCount} seeds planted</span>
@@ -82,7 +82,7 @@ const Dashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="grid md:grid-cols-4 gap-6 mb-8"
+          className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-6 md:mb-8"
         >
           {[
             {
@@ -115,13 +115,13 @@ const Dashboard = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 + index * 0.1 }}
-              className="card-garden p-6 text-center"
+              className="card-garden p-3 md:p-6 text-center"
             >
-              <Icon className={`w-8 h-8 ${color} mx-auto mb-3`} fill="currentColor" />
-              <div className="text-2xl font-nunito font-bold text-foreground mb-1">
+              <Icon className={`w-6 h-6 md:w-8 md:h-8 ${color} mx-auto mb-2 md:mb-3`} fill="currentColor" />
+              <div className="text-lg md:text-2xl font-nunito font-bold text-foreground mb-1">
                 {value}
               </div>
-              <div className="text-sm text-muted-foreground">
+              <div className="text-xs md:text-sm text-muted-foreground">
                 {label}
               </div>
             </motion.div>
@@ -133,11 +133,11 @@ const Dashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
-          className="grid lg:grid-cols-2 gap-8"
+          className="grid lg:grid-cols-2 gap-4 md:gap-8"
         >
           {/* Recent Donations */}
-          <div className="card-garden p-6">
-            <h2 className="text-2xl font-nunito font-bold text-foreground mb-6">
+          <div className="card-garden p-4 md:p-6">
+            <h2 className="text-xl md:text-2xl font-nunito font-bold text-foreground mb-4 md:mb-6">
               Recent Donation History
             </h2>
             
@@ -148,19 +148,19 @@ const Dashboard = () => {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.9 + index * 0.1 }}
-                  className="flex justify-between items-center p-4 bg-background rounded-xl border border-border hover:border-primary/20 transition-colors"
+                  className="flex flex-col md:flex-row justify-between items-start md:items-center p-3 md:p-4 bg-background rounded-xl border border-border hover:border-primary/20 transition-colors space-y-2 md:space-y-0"
                 >
-                  <div>
-                    <p className="font-nunito font-semibold text-foreground">
+                  <div className="flex-1">
+                    <p className="font-nunito font-semibold text-foreground text-sm md:text-base">
                       {donation.campaign}
                     </p>
-                    <p className="text-sm text-muted-foreground flex items-center space-x-1">
-                      <Calendar className="w-4 h-4" />
+                    <p className="text-xs md:text-sm text-muted-foreground flex items-center space-x-1">
+                      <Calendar className="w-3 h-3 md:w-4 md:h-4" />
                       <span>{new Date(donation.date).toLocaleDateString()}</span>
                     </p>
                   </div>
-                  <div className="text-right">
-                    <p className="font-nunito font-bold text-primary">
+                  <div className="text-left md:text-right">
+                    <p className="font-nunito font-bold text-primary text-sm md:text-base">
                       {formatAPT(donation.amount)} APT
                     </p>
                     <p className="text-xs text-muted-foreground">
@@ -173,8 +173,8 @@ const Dashboard = () => {
           </div>
 
           {/* Impact Metrics */}
-          <div className="card-garden p-6">
-            <h2 className="text-2xl font-nunito font-bold text-foreground mb-6">
+          <div className="card-garden p-4 md:p-6">
+            <h2 className="text-xl md:text-2xl font-nunito font-bold text-foreground mb-4 md:mb-6">
               Your Impact Metrics
             </h2>
             
@@ -183,13 +183,13 @@ const Dashboard = () => {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 1.0 }}
-                className="p-4 bg-mint-soft/20 rounded-xl border border-mint-soft/50"
+                className="p-3 md:p-4 bg-mint-soft/20 rounded-xl border border-mint-soft/50"
               >
                 <div className="flex items-center space-x-2 mb-2">
-                  <Heart className="w-5 h-5 text-primary" fill="currentColor" />
-                  <span className="font-nunito font-semibold">Environmental Impact</span>
+                  <Heart className="w-4 h-4 md:w-5 md:h-5 text-primary" fill="currentColor" />
+                  <span className="font-nunito font-semibold text-sm md:text-base">Environmental Impact</span>
                 </div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs md:text-sm text-muted-foreground">
                   Your donations have helped plant 145 trees and protect 2.3 acres of ocean.
                 </p>
               </motion.div>
@@ -198,13 +198,13 @@ const Dashboard = () => {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 1.1 }}
-                className="p-4 bg-primary/10 rounded-xl border border-primary/20"
+                className="p-3 md:p-4 bg-primary/10 rounded-xl border border-primary/20"
               >
                 <div className="flex items-center space-x-2 mb-2">
-                  <Trophy className="w-5 h-5 text-primary" />
-                  <span className="font-nunito font-semibold">Community Impact</span>
+                  <Trophy className="w-4 h-4 md:w-5 md:h-5 text-primary" />
+                  <span className="font-nunito font-semibold text-sm md:text-base">Community Impact</span>
                 </div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs md:text-sm text-muted-foreground">
                   You've helped provide clean water access to 47 families.
                 </p>
               </motion.div>
@@ -213,13 +213,13 @@ const Dashboard = () => {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 1.2 }}
-                className="p-4 bg-background/50 rounded-xl border border-border"
+                className="p-3 md:p-4 bg-background/50 rounded-xl border border-border"
               >
                 <div className="flex items-center space-x-2 mb-2">
-                  <TrendingUp className="w-5 h-5 text-primary" />
-                  <span className="font-nunito font-semibold">Growing Impact</span>
+                  <TrendingUp className="w-4 h-4 md:w-5 md:h-5 text-primary" />
+                  <span className="font-nunito font-semibold text-sm md:text-base">Growing Impact</span>
                 </div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs md:text-sm text-muted-foreground">
                   Your impact score has increased by 15% this month. Keep donating!
                 </p>
               </motion.div>
@@ -232,24 +232,24 @@ const Dashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.3 }}
-          className="mt-12 text-center"
+          className="mt-8 md:mt-12 text-center"
         >
-          <div className="card-garden p-8 bg-primary/5 border-primary/20">
-            <div className="text-6xl mb-4">🚀</div>
-            <h3 className="text-2xl font-nunito font-bold text-foreground mb-4">
+          <div className="card-garden p-4 md:p-8 bg-primary/5 border-primary/20">
+            <div className="text-4xl md:text-6xl mb-3 md:mb-4">🚀</div>
+            <h3 className="text-xl md:text-2xl font-nunito font-bold text-foreground mb-3 md:mb-4">
               Ready to Make More Impact?
             </h3>
-            <p className="text-muted-foreground mb-6">
+            <p className="text-sm md:text-base text-muted-foreground mb-4 md:mb-6 px-2">
               Explore new campaigns, manage your staking, or participate in governance.
             </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <a href="/marketplace" className="btn-garden-primary">
+            <div className="flex flex-col md:flex-row flex-wrap justify-center gap-2 md:gap-4">
+              <a href="/marketplace" className="btn-garden-primary text-sm md:text-base px-4 py-2">
                 Browse Campaigns
               </a>
-              <a href="/staking" className="btn-garden-secondary">
+              <a href="/staking" className="btn-garden-secondary text-sm md:text-base px-4 py-2">
                 Manage Staking
               </a>
-              <a href="/governance" className="btn-garden-secondary">
+              <a href="/governance" className="btn-garden-secondary text-sm md:text-base px-4 py-2">
                 Vote on Proposals
               </a>
             </div>

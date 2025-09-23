@@ -115,11 +115,11 @@ const AnimatedSectionsLanding = () => {
         <Button 
           variant="premium" 
           size="lg"
-          className="mt-8"
+          className="mt-6 md:mt-8 text-sm md:text-base px-4 md:px-6 py-2 md:py-3"
         >
-          <Heart className="w-5 h-5 mr-2" />
+          <Heart className="w-4 h-4 md:w-5 md:h-5 mr-2" />
           Login
-          <ArrowRight className="w-5 h-5 ml-2" />
+          <ArrowRight className="w-4 h-4 md:w-5 md:h-5 ml-2" />
         </Button>
       </Link>
     );
@@ -202,10 +202,10 @@ const AnimatedSectionsLanding = () => {
                 }}
               >
                 <div className="text-center text-white z-50 px-4 max-w-5xl">
-                  <h2 className="section-heading font-shadows text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-semibold leading-tight mb-6 max-w-4xl mx-auto">
+                  <h2 className="section-heading font-shadows text-3xl md:text-5xl lg:text-7xl xl:text-8xl font-semibold leading-tight mb-4 md:mb-6 max-w-4xl mx-auto">
                     {section.title}
                   </h2>
-                  <p className="text-xl md:text-2xl lg:text-3xl font-caveat text-white/90 mb-8">
+                  <p className="text-base md:text-xl lg:text-2xl xl:text-3xl font-caveat text-white/90 mb-6 md:mb-8">
                     {section.subtitle}
                   </p>
                   {getActionButtons(index)}
