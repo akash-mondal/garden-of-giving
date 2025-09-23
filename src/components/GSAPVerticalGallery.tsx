@@ -10,9 +10,16 @@ import charity3 from '../assets/charity-3.jpg';
 import charity4 from '../assets/charity-4.jpg';
 import charity5 from '../assets/charity-5.jpg';
 import charity6 from '../assets/charity-6.jpg';
+import charity7 from '../assets/charity-7.jpg';
+import charity8 from '../assets/charity-8.jpg';
+import charity9 from '../assets/charity-9.jpg';
+import charity10 from '../assets/charity-10.jpg';
 import pattern1 from '../assets/pattern-1.jpg';
 import pattern2 from '../assets/pattern-2.jpg';
 import pattern3 from '../assets/pattern-3.jpg';
+import pattern4 from '../assets/pattern-4.jpg';
+import pattern5 from '../assets/pattern-5.jpg';
+import pattern6 from '../assets/pattern-6.jpg';
 
 // gsap.registerPlugin(Observer);
 
@@ -23,9 +30,9 @@ const GSAPVerticalGallery: React.FC = () => {
   const loopsRef = useRef<gsap.core.Timeline[]>([]);
 
   const columnData = [
-    [pattern1, charity1, charity3, pattern2, charity5, pattern3],
-    [pattern3, charity2, charity4, pattern1, charity6, charity1],
-    [pattern2, charity3, charity2, pattern3, charity4, charity6]
+    [pattern1, charity1, charity3, pattern2, charity5, pattern3, charity7, pattern4, charity9, pattern5],
+    [pattern3, charity2, charity4, pattern1, charity6, charity8, pattern6, charity10, pattern2, charity7],
+    [pattern2, charity3, charity5, pattern4, charity8, charity6, pattern5, charity9, charity10, pattern6]
   ];
 
   useEffect(() => {
@@ -114,9 +121,12 @@ const GSAPVerticalGallery: React.FC = () => {
     
     const handleImageLoad = () => {
       loadedImages++;
-      if (loadedImages === images.length) {
-        initializeAnimation();
-      }
+    if (loadedImages === images.length) {
+      const cleanup = initializeAnimation();
+      
+      // Store cleanup data for later use
+      (wrapper as any)._cleanup = cleanup;
+    }
     };
 
     images.forEach(img => {
@@ -150,41 +160,50 @@ const GSAPVerticalGallery: React.FC = () => {
       // Fade in columns
       gsap.set(columns, { autoAlpha: 1 });
 
-      // Create scroll interactions with wheel events
-      let isScrolling = false;
+      // Auto-scrolling animation instead of manual scroll
+      const autoScrollTl = gsap.timeline({ repeat: -1 });
       
-      handleWheel = (e: WheelEvent) => {
+      // Smooth continuous scrolling
+      autoScrollTl
+        .to(loops, {
+          timeScale: 0.8,
+          duration: 4,
+          ease: "power2.inOut"
+        })
+        .to(loops, {
+          timeScale: -0.5,
+          duration: 3,
+          ease: "power2.inOut"
+        })
+        .to(loops, {
+          timeScale: 1.2,
+          duration: 5,
+          ease: "power2.inOut"
+        })
+        .to(loops, {
+          timeScale: -0.8,
+          duration: 4,
+          ease: "power2.inOut"
+        });
+      
+      // Pause auto-scroll on hover to allow reading
+      const contentElement = contentRef.current;
+      if (contentElement) {
+        contentElement.addEventListener('mouseenter', () => {
+          gsap.to(loops, { timeScale: 0.1, duration: 0.5 });
+        });
+        
+        contentElement.addEventListener('mouseleave', () => {
+          autoScrollTl.resume();
+        });
+      }
+      
+      // Disable manual scrolling
+      const preventScroll = (e: WheelEvent) => {
         e.preventDefault();
-        
-        if (isScrolling) return;
-        isScrolling = true;
-        
-        const direction = e.deltaY > 0 ? 1 : -1;
-        
-        gsap.timeline()
-          .to(loops, {
-            timeScale: (i) => direction * (i % 2 > 0 ? 2 : 2.5),
-            overwrite: true,
-            duration: 0.2
-          })
-          .to(loops, {
-            timeScale: 0,
-            ease: "power1.in",
-            onComplete: () => {
-              isScrolling = false;
-            }
-          }, 1);
       };
       
-      window.addEventListener('wheel', handleWheel, { passive: false });
-
-      // Auto-scroll animation for scroll indicator
-      const autoScrollTl = gsap.timeline({ repeat: -1, yoyo: true });
-      autoScrollTl.to(loops, {
-        timeScale: 0.3,
-        duration: 3,
-        ease: "power2.inOut"
-      });
+      window.addEventListener('wheel', preventScroll, { passive: false });
 
       // Show/hide scroll indicator based on interaction
       let interactionTimeout: NodeJS.Timeout;
@@ -192,14 +211,12 @@ const GSAPVerticalGallery: React.FC = () => {
         if (scrollIndicatorRef.current) {
           gsap.to(scrollIndicatorRef.current, { opacity: 1, duration: 0.3 });
         }
-        autoScrollTl.play();
       };
 
       const hideScrollIndicator = () => {
         if (scrollIndicatorRef.current) {
           gsap.to(scrollIndicatorRef.current, { opacity: 0, duration: 0.3 });
         }
-        autoScrollTl.pause();
         clearTimeout(interactionTimeout);
         interactionTimeout = setTimeout(showScrollIndicator, 3000);
       };
@@ -208,14 +225,26 @@ const GSAPVerticalGallery: React.FC = () => {
       showScrollIndicator();
 
       // Hide indicator on interaction
-      window.addEventListener('wheel', hideScrollIndicator);
       window.addEventListener('touchstart', hideScrollIndicator);
+      
+      // Store cleanup functions
+      return {
+        loops,
+        preventScroll,
+        autoScrollTl
+      };
     };
 
     // Cleanup function
     return () => {
+      const cleanup = (wrapper as any)?._cleanup;
+      if (cleanup) {
+        cleanup.loops?.forEach((loop: any) => loop.kill());
+        window.removeEventListener('wheel', cleanup.preventScroll);
+        cleanup.autoScrollTl?.kill();
+      }
       loopsRef.current.forEach(loop => loop.kill());
-      window.removeEventListener('wheel', handleWheel);
+      gsap.killTweensOf("*");
     };
   }, []);
 
@@ -226,44 +255,64 @@ const GSAPVerticalGallery: React.FC = () => {
         ref={contentRef}
         className="absolute inset-0 z-20 pointer-events-none flex flex-col items-center justify-center"
       >
-        <div className="text-center space-y-8 max-w-4xl mx-auto px-4 pointer-events-auto">
-          <div className="space-y-4">
-            <div className="flex items-center justify-center space-x-2 mb-4">
-              <Sparkles className="w-6 h-6 text-primary" />
-              <span className="text-primary font-nunito font-semibold text-lg">
-                Web3 Charitable Platform
-              </span>
+        {/* Background for better text readability */}
+        <div className="absolute inset-0 bg-background/60 backdrop-blur-sm" />
+        
+        <div className="relative text-center space-y-8 max-w-4xl mx-auto px-4 pointer-events-auto">
+          <div className="bg-background/80 backdrop-blur-md rounded-3xl p-8 border border-border/20 shadow-2xl">
+            <div className="space-y-6">
+              <div className="flex items-center justify-center space-x-2 mb-4">
+                <Sparkles className="w-6 h-6 text-primary" />
+                <span className="text-primary font-nunito font-semibold text-lg">
+                  Web3 Charitable Platform
+                </span>
+              </div>
+              
+              <h1 className="text-6xl lg:text-7xl font-shadows text-foreground leading-tight">
+                Transform Giving Into{' '}
+                <span className="text-primary bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                  Growing
+                </span>
+              </h1>
+              
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                Experience the future of charitable giving with blockchain transparency, 
+                HEART token rewards, and your personalized virtual garden that grows with every donation.
+              </p>
             </div>
-            
-            <h1 className="text-7xl lg:text-8xl font-shadows text-foreground leading-tight">
-              Transform Giving Into{' '}
-              <span className="text-primary bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                Growing
-              </span>
-            </h1>
-            
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Experience the future of charitable giving with blockchain transparency, 
-              HEART token rewards, and your personalized virtual garden that grows with every donation.
-            </p>
-          </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
-            <Link
-              to="/marketplace"
-              className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-4 rounded-2xl font-nunito font-semibold text-lg transition-all duration-300 hover:scale-105 flex items-center space-x-2 shadow-lg"
-            >
-              <Heart className="w-5 h-5" />
-              <span>Start Growing</span>
-            </Link>
-            
-            <Link
-              to="/dashboard"
-              className="bg-secondary text-secondary-foreground hover:bg-secondary/80 px-8 py-4 rounded-2xl font-nunito font-semibold text-lg transition-all duration-300 hover:scale-105 flex items-center space-x-2 shadow-lg"
-            >
-              <Users className="w-5 h-5" />
-              <span>Join Community</span>
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-4 items-center justify-center mt-8">
+              <Link
+                to="/marketplace"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-4 rounded-2xl font-nunito font-semibold text-lg transition-all duration-300 hover:scale-105 flex items-center space-x-2 shadow-xl"
+              >
+                <Heart className="w-5 h-5" />
+                <span>Start Growing</span>
+              </Link>
+              
+              <Link
+                to="/dashboard"
+                className="bg-secondary text-secondary-foreground hover:bg-secondary/80 px-8 py-4 rounded-2xl font-nunito font-semibold text-lg transition-all duration-300 hover:scale-105 flex items-center space-x-2 shadow-xl"
+              >
+                <Users className="w-5 h-5" />
+                <span>Join Community</span>
+              </Link>
+            </div>
+          </div>
+          
+          {/* Features highlight */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+            {[
+              { icon: "🔒", title: "Secure & Transparent", desc: "Blockchain verified donations" },
+              { icon: "🌱", title: "Grow Your Garden", desc: "Visual representation of impact" },
+              { icon: "❤️", title: "Earn HEART Tokens", desc: "Rewards for every donation" }
+            ].map((feature, i) => (
+              <div key={i} className="bg-card/60 backdrop-blur-sm rounded-2xl p-4 border border-border/20">
+                <div className="text-2xl mb-2">{feature.icon}</div>
+                <h3 className="font-nunito font-semibold text-foreground text-sm">{feature.title}</h3>
+                <p className="text-xs text-muted-foreground mt-1">{feature.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </div>
