@@ -44,8 +44,8 @@ const Marketplace = () => {
             The Garden of Causes
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Discover meaningful campaigns that are making a real difference. 
-            Find the perfect cause to support and watch your impact bloom.
+            Discover meaningful campaigns and earn HEART tokens. Transform your compassion into Heart NFTs 
+            that celebrate your generosity.
           </p>
         </motion.div>
 

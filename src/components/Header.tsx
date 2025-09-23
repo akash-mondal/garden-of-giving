@@ -38,7 +38,7 @@ const Header = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3 group">
             <div className="relative">
-              <Heart className="w-8 h-8 text-primary glow-pulse" fill="currentColor" />
+              <span className="text-4xl">❤️</span>
               <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl scale-150 group-hover:scale-200 transition-transform duration-500" />
             </div>
             <div>
@@ -132,9 +132,9 @@ const Header = () => {
                           </div>
                           <div className="flex justify-between items-center">
                             <span className="text-sm text-muted-foreground">HEART Tokens</span>
-                            <span className="font-nunito font-semibold text-primary">
-                              {currentUser?.heartTokens} ❤️
-                            </span>
+                      <span className="font-nunito font-semibold text-primary">
+                        {currentUser?.heartTokens} ❤️ HEART
+                      </span>
                           </div>
                           <div className="flex justify-between items-center">
                             <span className="text-sm text-muted-foreground">Campaigns Supported</span>

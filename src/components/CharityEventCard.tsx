@@ -19,7 +19,7 @@ const CharityEventCard: React.FC<CharityEventCardProps> = ({ event, featured = f
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -5, scale: 1.02 }}
       transition={{ duration: 0.3 }}
-      className={`card-garden overflow-hidden ${featured ? 'lg:col-span-2' : ''}`}
+      className={`card-garden overflow-hidden h-[420px] flex flex-col ${featured ? 'lg:col-span-2 lg:h-[480px]' : ''}`}
     >
       <Link to={`/event/${event.eventAddress}`} className="block">
         <div className="relative">
@@ -59,9 +59,9 @@ const CharityEventCard: React.FC<CharityEventCardProps> = ({ event, featured = f
           </div>
         </div>
 
-        <div className="p-6 space-y-4">
+        <div className="p-6 space-y-4 flex-1 flex flex-col">
           <div>
-            <h3 className="font-nunito text-xl font-bold text-foreground mb-1">
+            <h3 className="font-nunito text-xl font-bold text-foreground mb-1 line-clamp-2">
               {event.eventName}
             </h3>
             <p className="text-sm text-primary font-nunito font-medium">
@@ -69,18 +69,18 @@ const CharityEventCard: React.FC<CharityEventCardProps> = ({ event, featured = f
             </p>
           </div>
 
-          <p className="text-muted-foreground text-sm line-clamp-3 leading-relaxed">
+          <p className="text-muted-foreground text-sm line-clamp-3 leading-relaxed flex-1">
             {event.description}
           </p>
 
-          <div className="flex items-center justify-between pt-4 border-t border-border/50">
+          <div className="flex items-center justify-between pt-4 border-t border-border/50 mt-auto">
             <div className="flex items-center space-x-4 text-sm text-muted-foreground">
               <div className="flex items-center space-x-1">
                 <Users className="w-4 h-4" />
                 <span>{Math.floor(event.totalDonated / 50)} donors</span>
               </div>
               <div className="flex items-center space-x-1">
-                <Heart className="w-4 h-4 text-primary" fill="currentColor" />
+                <span className="text-primary">❤️</span>
                 <span>{event.milestones.filter(m => m.isClaimed).length} milestones</span>
               </div>
             </div>

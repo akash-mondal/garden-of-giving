@@ -196,7 +196,9 @@ const ZenGarden: React.FC<ZenGardenProps> = ({
       >
         <canvas 
           ref={canvasRef}
-          className="rounded-3xl shadow-[var(--shadow-garden)] border border-border/20 bg-gradient-to-b from-sky-50/30 to-green-50/30"
+          className="rounded-3xl shadow-[var(--shadow-garden)] border border-border/20 bg-gradient-to-b from-sky-50/30 to-green-50/30 block"
+          width={400}
+          height={300}
           style={{ maxWidth: '100%', height: 'auto' }}
         />
         
