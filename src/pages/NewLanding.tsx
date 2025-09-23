@@ -131,11 +131,7 @@ const NewLanding = () => {
               >
                 <Link 
                   to="/marketplace"
-                  className="btn-garden-primary flex items-center space-x-2 group relative overflow-hidden"
-                  style={{
-                    background: 'linear-gradient(135deg, #ff69b4, #ff1493)',
-                    boxShadow: '0 10px 30px rgba(255, 105, 180, 0.4)'
-                  }}
+                  className="inline-flex items-center justify-center gap-2 h-14 px-8 rounded-xl text-lg font-semibold bg-gradient-to-r from-pink-500 via-rose-500 to-purple-600 text-white shadow-lg hover:shadow-2xl hover:shadow-pink-500/25 transform hover:scale-[1.02] active:scale-[0.98] border border-white/20 transition-all duration-300 group"
                 >
                   <Globe className="w-5 h-5" />
                   <span>Explore Marketplace</span>
@@ -153,12 +149,7 @@ const NewLanding = () => {
                 >
                   <button 
                     onClick={connect}
-                    className="btn-garden-secondary flex items-center space-x-2 relative overflow-hidden"
-                    style={{
-                      backdropFilter: 'blur(10px)',
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      border: '2px solid rgba(255, 105, 180, 0.5)'
-                    }}
+                    className="inline-flex items-center justify-center gap-2 h-14 px-8 rounded-xl text-lg font-semibold bg-white/10 backdrop-blur-md border-2 border-white/30 text-white hover:bg-white/20 hover:border-white/50 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
                   >
                     <Heart className="w-5 h-5" />
                     <span>Connect Wallet</span>
