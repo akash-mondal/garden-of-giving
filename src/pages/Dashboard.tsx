@@ -2,22 +2,54 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Navigate } from 'react-router-dom';
 import { Heart, Trophy, TrendingUp, Vote, Lock, Unlock, Calendar, Award, ExternalLink } from 'lucide-react';
-import { useWallet } from '../contexts/WalletContext';
+import { useAuth } from '../contexts/AuthContext';
 import { mockGovernanceProposals, formatAPT } from '../mockData';
 import GardenParticles from '../components/GardenParticles';
 
 const Dashboard = () => {
-  const { isConnected, currentUser } = useWallet();
+  const { isAuthenticated, user } = useAuth();
   const [activeTab, setActiveTab] = useState<'impact' | 'badges' | 'staking' | 'governance'>('impact');
   const [stakingAmount, setStakingAmount] = useState<string>('');
 
-  // Redirect if not connected
-  if (!isConnected || !currentUser) {
-    return <Navigate to="/" replace />;
+  // Redirect if not authenticated
+  if (!isAuthenticated || !user) {
+    return <Navigate to="/login" replace />;
   }
 
+  // Mock user data for dashboard
+  const mockUserData = {
+    aptosName: user.name,
+    totalDonatedAPT: 425,
+    donationCount: 12,
+    heartTokens: 850,
+    stakedHeartTokens: 250,
+    nftBadges: [
+      {
+        tokenId: '1',
+        name: 'First Donor',
+        description: 'Made your first donation',
+        imageUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=badge1',
+        dateEarned: '2024-03-01'
+      },
+      {
+        tokenId: '2', 
+        name: 'Ocean Protector',
+        description: 'Donated to marine conservation',
+        imageUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=badge2',
+        dateEarned: '2024-03-10'
+      },
+      {
+        tokenId: '3',
+        name: 'Forest Guardian',
+        description: 'Supported reforestation efforts',
+        imageUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=badge3', 
+        dateEarned: '2024-03-15'
+      }
+    ]
+  };
+
   const stakingAPY = 12.5; // 12.5% APY for staking
-  const availableToStake = currentUser.heartTokens - currentUser.stakedHeartTokens;
+  const availableToStake = mockUserData.heartTokens - mockUserData.stakedHeartTokens;
 
   const handleStake = () => {
     // Mock staking functionality
@@ -56,7 +88,7 @@ const Dashboard = () => {
             Your Garden
           </h1>
           <p className="text-xl font-caveat text-primary">
-            Welcome back, {currentUser.aptosName}
+            Welcome back, {mockUserData.aptosName}
           </p>
         </motion.div>
 
@@ -78,16 +110,16 @@ const Dashboard = () => {
             <p className="text-lg font-caveat text-primary">
               Your personal garden grows with every donation
             </p>
-            <div className="flex items-center justify-center space-x-6 text-sm text-muted-foreground">
-              <div className="flex items-center space-x-1">
-                <span>🌱</span>
-                <span>{currentUser.donationCount} seeds planted</span>
+              <div className="flex items-center space-x-6 text-sm text-muted-foreground">
+                <div className="flex items-center space-x-1">
+                  <span>🌱</span>
+                  <span>{mockUserData.donationCount} seeds planted</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <span>❤️</span>
+                  <span>{mockUserData.heartTokens} HEART earned</span>
+                </div>
               </div>
-              <div className="flex items-center space-x-1">
-                <span>❤️</span>
-                <span>{currentUser.heartTokens} HEART earned</span>
-              </div>
-            </div>
           </div>
         </motion.div>
 
@@ -102,25 +134,25 @@ const Dashboard = () => {
             {
               icon: Heart,
               label: 'Total Donated',
-              value: `${formatAPT(currentUser.totalDonatedAPT)} APT`,
+              value: `${formatAPT(mockUserData.totalDonatedAPT)} APT`,
               color: 'text-primary'
             },
             {
               icon: Trophy,
               label: 'Campaigns Supported',
-              value: currentUser.donationCount.toString(),
+              value: mockUserData.donationCount.toString(),
               color: 'text-primary'
             },
             {
               icon: Heart,
               label: 'HEART Tokens',
-              value: currentUser.heartTokens.toString(),
+              value: mockUserData.heartTokens.toString(),
               color: 'text-primary'
             },
             {
               icon: Lock,
               label: 'Staked HEART', 
-              value: currentUser.stakedHeartTokens.toString(),
+              value: mockUserData.stakedHeartTokens.toString(),
               color: 'text-primary'
             }
           ].map(({ icon: Icon, label, value, color }, index) => (
@@ -250,7 +282,7 @@ const Dashboard = () => {
               </h2>
               
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {currentUser.nftBadges.map((badge) => (
+                {mockUserData.nftBadges.map((badge) => (
                   <motion.div
                     key={badge.tokenId}
                     initial={{ opacity: 0, scale: 0.9 }}
@@ -345,17 +377,17 @@ const Dashboard = () => {
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">Staked Amount</span>
                       <span className="font-nunito font-bold text-primary">
-                        {currentUser.stakedHeartTokens} HEART
+                        {mockUserData.stakedHeartTokens} HEART
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">Est. Annual Rewards</span>
                       <span className="font-nunito font-bold text-primary">
-                        {Math.floor(currentUser.stakedHeartTokens * (stakingAPY / 100))} HEART
+                        {Math.floor(mockUserData.stakedHeartTokens * (stakingAPY / 100))} HEART
                       </span>
                     </div>
                     
-                    {currentUser.stakedHeartTokens > 0 && (
+                    {mockUserData.stakedHeartTokens > 0 && (
                       <button
                         onClick={handleUnstake}
                         className="w-full btn-garden-secondary flex items-center justify-center space-x-2"
