@@ -26,7 +26,7 @@ const AnimatedSectionsLanding = () => {
   const sections = [
     {
       title: "Transform Lives Through Giving",
-      subtitle: "Start your journey of compassionate impact",
+      subtitle: "",
       image: charityHero1,
       id: "first"
     },
