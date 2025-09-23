@@ -1,21 +1,18 @@
 import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
-import { ScrambleTextPlugin, SplitText } from 'gsap/all';
+import { ScrambleTextPlugin } from 'gsap/all';
 import { useWallet } from '../contexts/WalletContext';
 import gardenBackground from '../assets/garden-background.jpg';
-import gardenOverlay from '../assets/garden-overlay.jpg';
 import '../styles/newLanding.css';
 
 // Register GSAP plugins
-gsap.registerPlugin(ScrambleTextPlugin, SplitText);
+gsap.registerPlugin(ScrambleTextPlugin);
 
 const NewLanding = () => {
   const { connect, isConnected } = useWallet();
   const preloaderRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const overlayRef = useRef<HTMLDivElement>(null);
-  const featuredImageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Check if user has already seen the animation
@@ -260,47 +257,6 @@ const NewLanding = () => {
         "-=0.3"
       );
 
-      // Initialize SplitText after content is visible
-      revealTl.call(() => {
-        // Initialize SplitText on nav links
-        const navLinks = document.querySelectorAll(".nav-link");
-        navLinks.forEach((link) => {
-          // Create new SplitText instance with new features
-          const splitLink = new SplitText(link as HTMLElement, {
-            type: "chars",
-            charsClass: "char"
-          });
-
-          // Store the SplitText instance on the element
-          (link as any)._splitText = splitLink;
-
-          // Setup hover effect
-          link.addEventListener("mouseenter", () => {
-            gsap.to(splitLink.chars, {
-              x: (i: number) => `${0.5 + i * 0.1}em`,
-              duration: 0.64,
-              ease: slideEase,
-              stagger: {
-                each: 0.015,
-                from: "start"
-              }
-            });
-          });
-
-          link.addEventListener("mouseleave", () => {
-            gsap.to(splitLink.chars, {
-              x: 0,
-              duration: 0.64,
-              ease: slideEase,
-              stagger: {
-                each: 0.01,
-                from: "end"
-              }
-            });
-          });
-        });
-      });
-
       // Animate the title lines
       revealTl.to(
         titleLines,
@@ -312,306 +268,6 @@ const NewLanding = () => {
         },
         "-=0.2"
       );
-    }
-
-    // Initialize simple cursor (without hover effects)
-    function initializeCursor() {
-      const cursor = document.getElementById("cursor");
-      const cursorPt = document.getElementById("cursorPt");
-
-      if (!cursor || !cursorPt) return;
-
-      const CURSOR_WIDTH = 30;
-      const CURSOR_PT_WIDTH = 7;
-
-      // Mouse move handler - basic following only
-      document.addEventListener("mousemove", (e) => {
-        gsap.to(cursor, { 
-          autoAlpha: 1,
-          x: e.clientX - CURSOR_WIDTH / 2,
-          y: e.clientY - CURSOR_WIDTH / 2,
-          duration: 0.1,
-          ease: "expo.out"
-        });
-        
-        gsap.to(cursorPt, {
-          autoAlpha: 1,
-          x: e.clientX - CURSOR_PT_WIDTH / 2,
-          y: e.clientY - CURSOR_PT_WIDTH / 2,
-          duration: 0.1,
-          ease: "expo.out"
-        });
-      });
-    }
-    
-    // Initialize menu functionality
-    function initializeMenu() {
-      // Elements
-      const menuBtn = document.getElementById("menu-btn");
-      const closeBtn = document.getElementById("close-btn");
-      const overlay = overlayRef.current;
-      const featuredImage = featuredImageRef.current;
-      const brandLogo = document.querySelector(".brand .text-reveal a");
-      const primaryNav = document.querySelector(".primary-nav .grid");
-      const overlayBrand = document.querySelector(
-        ".overlay-brand .text-reveal a"
-      );
-      const overlayClose = document.querySelector(".close-toggle .text-reveal p");
-      const navLinks = document.querySelectorAll(".nav-link");
-      const footerItems = document.querySelectorAll(
-        ".overlay-footer .text-reveal p, .overlay-footer .text-reveal a"
-      );
-      const titleLines = document.querySelectorAll(
-        ".quote-section .title-line span"
-      );
-
-      let isAnimating = false;
-
-      // Initial setup
-      if (overlay) {
-        gsap.set(overlay, {
-          clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)",
-          pointerEvents: "none"
-        });
-      }
-
-      if (featuredImage) {
-        gsap.set(featuredImage, {
-          clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)"
-        });
-      }
-
-      gsap.set([overlayBrand, overlayClose], {
-        y: "100%"
-      });
-
-      gsap.set(".nav-link", {
-        y: "100%"
-      });
-
-      gsap.set(footerItems, {
-        y: "100%"
-      });
-
-      // Open menu function
-      function openMenu() {
-        if (isAnimating || !overlay) return;
-        isAnimating = true;
-
-        const tl = gsap.timeline({
-          onComplete: () => (isAnimating = false)
-        });
-
-        // Hide the title lines with staggered animation
-        tl.to(titleLines, {
-          y: "100%",
-          duration: 0.64,
-          stagger: 0.075,
-          ease: slideEase
-        });
-
-        tl.to(
-          [brandLogo, menuBtn],
-          {
-            y: "-100%",
-            duration: 0.64,
-            stagger: 0.1,
-            ease: slideEase,
-            onComplete: () => {
-              if (primaryNav) (primaryNav as HTMLElement).style.pointerEvents = "none";
-              gsap.set([brandLogo, menuBtn], {
-                y: "100%"
-              });
-            }
-          },
-          "-=0.4"
-        );
-
-        tl.to(
-          overlay,
-          {
-            clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
-            duration: 0.64,
-            ease: slideEase,
-            onStart: () => {
-              overlay.style.pointerEvents = "all";
-            }
-          },
-          "-=0.4"
-        );
-
-        // First let the overlay animation complete, then animate the image from bottom to top
-        if (featuredImage) {
-          tl.fromTo(
-            featuredImage,
-            {
-              clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)"
-            },
-            {
-              clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
-              duration: 0.64,
-              ease: slideEase
-            },
-            "-=0.2"
-          );
-        }
-
-        tl.to(
-          [overlayBrand, overlayClose],
-          {
-            y: "0%",
-            duration: 0.64,
-            stagger: 0.1,
-            ease: slideEase
-          },
-          "-=0.3"
-        );
-
-        tl.to(
-          ".nav-link",
-          {
-            y: "0%",
-            duration: 0.64,
-            stagger: 0.075,
-            ease: slideEase
-          },
-          "<"
-        );
-
-        tl.to(
-          footerItems,
-          {
-            y: "0%",
-            duration: 0.64,
-            stagger: 0.1,
-            ease: slideEase
-          },
-          "<"
-        );
-      }
-
-      // Close menu function
-      function closeMenu() {
-        if (isAnimating || !overlay) return;
-        isAnimating = true;
-
-        const tl = gsap.timeline({
-          onComplete: () => {
-            isAnimating = false;
-          }
-        });
-
-        tl.to([overlayBrand, overlayClose], {
-          y: "-100%",
-          duration: 0.64,
-          stagger: 0.1,
-          ease: slideEase
-        });
-
-        tl.to(
-          ".nav-link",
-          {
-            y: "-100%",
-            duration: 0.64,
-            stagger: 0.05,
-            ease: slideEase
-          },
-          "<"
-        );
-
-        // Make sure all footer items are animated, including social links
-        tl.to(
-          footerItems,
-          {
-            y: "-100%",
-            duration: 0.64,
-            stagger: 0.05,
-            ease: slideEase
-          },
-          "<"
-        );
-
-        // Animate the featured image to close from top to bottom
-        if (featuredImage) {
-          tl.to(
-            featuredImage,
-            {
-              clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)",
-              duration: 0.64,
-              ease: slideEase
-            },
-            "-=0.64"
-          );
-        }
-
-        tl.to(
-          overlay,
-          {
-            clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)",
-            duration: 0.64,
-            ease: slideEase,
-            onComplete: () => {
-              overlay.style.pointerEvents = "none";
-              gsap.set(overlay, {
-                clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)"
-              });
-              if (featuredImage) {
-                gsap.set(featuredImage, {
-                  clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)"
-                });
-              }
-              gsap.set([overlayBrand, overlayClose], {
-                y: "100%"
-              });
-              gsap.set(".nav-link", {
-                y: "100%"
-              });
-              gsap.set(footerItems, {
-                y: "100%"
-              });
-            }
-          },
-          "+=0.2"
-        );
-
-        tl.to(
-          [brandLogo, menuBtn],
-          {
-            y: "0%",
-            duration: 0.64,
-            stagger: 0.1,
-            ease: slideEase,
-            onStart: () => {
-              if (primaryNav) (primaryNav as HTMLElement).style.pointerEvents = "all";
-            }
-          },
-          "-=0.3"
-        );
-
-        // Show the title lines with staggered animation
-        tl.to(
-          titleLines,
-          {
-            y: "0%",
-            duration: 0.64,
-            stagger: 0.075,
-            ease: slideEase
-          },
-          "-=0.4"
-        );
-      }
-
-      // Event listeners
-      menuBtn?.addEventListener("click", openMenu);
-      closeBtn?.addEventListener("click", closeMenu);
-
-      // Menu item click handlers
-      navLinks.forEach((link) => {
-        link.addEventListener("click", (e) => {
-          e.preventDefault();
-          closeMenu();
-        });
-      });
     }
 
     // Setup initial preloader state
@@ -648,26 +304,12 @@ const NewLanding = () => {
       gsap.set(titleLines, {
         y: "0%"
       });
-
-      // Initialize menu and cursor
-      initializeMenu();
-      setTimeout(() => {
-        initializeCursor();
-      }, 100);
     } else {
       // First time visitor - show full animation
       const terminalAnimation = animateTerminalPreloader();
       
       // Mark as seen
       localStorage.setItem('hasSeenGardenAnimation', 'true');
-
-      // Initialize menu functionality
-      initializeMenu();
-      
-      // Initialize cursor functionality after content is loaded
-      setTimeout(() => {
-        initializeCursor();
-      }, 100);
 
       return () => {
         // Cleanup
@@ -679,6 +321,21 @@ const NewLanding = () => {
   return (
     <div className="new-landing">
       <div className="background-image" style={{ backgroundImage: `url(${gardenBackground})` }}></div>
+      
+      {/* Simple Navigation */}
+      <nav className="simple-nav">
+        <div className="nav-brand">
+          <Link to="/">CharityRewards</Link>
+        </div>
+        <div className="nav-links">
+          <Link to="/marketplace">Marketplace</Link>
+          <Link to="/dashboard">Dashboard</Link>
+          <button onClick={isConnected ? undefined : connect} className="connect-btn">
+            {isConnected ? 'Connected' : 'Connect Wallet'}
+          </button>
+        </div>
+      </nav>
+
       <div className="quote-section">
         <h2>
           <span className="title-line"><span>Compassion transcends borders</span></span>
@@ -687,10 +344,6 @@ const NewLanding = () => {
           <span className="title-line"><span>where kindness blooms.</span></span>
         </h2>
       </div>
-
-      {/* Custom Cursor Elements */}
-      <div id="cursorPt"></div>
-      <div id="cursor"></div>
 
       <div className="preloader" id="preloader" ref={preloaderRef}>
         <div className="terminal-preloader">
@@ -792,90 +445,6 @@ const NewLanding = () => {
 
       {/* Main Content */}
       <div className="content-container" id="content" ref={contentRef}>
-        <header className="site-header">
-          <nav className="primary-nav">
-            <div className="grid">
-              <div className="brand">
-                <div className="text-reveal">
-                  <Link to="/">CharityRewards</Link>
-                </div>
-              </div>
-              <div className="menu-toggle">
-                <div className="text-reveal">
-                  <p id="menu-btn">Menu</p>
-                </div>
-              </div>
-            </div>
-          </nav>
-          <div className="overlay" id="overlay" ref={overlayRef}>
-            <div className="featured-image" id="featured-image" ref={featuredImageRef} style={{ backgroundImage: `url(${gardenOverlay})` }}></div>
-            <div className="overlay-header">
-              <div className="grid">
-                <div className="overlay-brand">
-                  <div className="text-reveal">
-                    <Link to="/">CharityRewards</Link>
-                  </div>
-                </div>
-                <div className="close-toggle">
-                  <div className="text-reveal">
-                    <p id="close-btn">Close</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <nav className="nav-menu">
-              <div className="nav-menu-inner">
-                <div className="nav-item">
-                  <div className="text-reveal">
-                    <Link to="/marketplace" className="nav-link shift-effect">Marketplace</Link>
-                  </div>
-                </div>
-                <div className="nav-item">
-                  <div className="text-reveal">
-                    <Link to="/dashboard" className="nav-link shift-effect">Dashboard</Link>
-                  </div>
-                </div>
-                <div className="nav-item">
-                  <div className="text-reveal">
-                    <a href="#" className="nav-link shift-effect" onClick={isConnected ? undefined : connect}>
-                      {isConnected ? 'Connected' : 'Connect Wallet'}
-                    </a>
-                  </div>
-                </div>
-                <div className="nav-item">
-                  <div className="text-reveal">
-                    <a href="#about" className="nav-link shift-effect">About Garden</a>
-                  </div>
-                </div>
-                <div className="nav-item">
-                  <div className="text-reveal">
-                    <a href="#contact" className="nav-link shift-effect">Contact</a>
-                  </div>
-                </div>
-              </div>
-            </nav>
-            <footer className="overlay-footer">
-              <div className="grid">
-                <div className="copyright">
-                  <div className="text-reveal">
-                    <p>&copy; CharityRewards 2025</p>
-                  </div>
-                </div>
-                <div className="social-links">
-                  <div className="text-reveal">
-                    <a href="#">Discord</a>
-                  </div>
-                  <div className="text-reveal">
-                    <a href="#">Twitter</a>
-                  </div>
-                  <div className="text-reveal">
-                    <a href="#">GitHub</a>
-                  </div>
-                </div>
-              </div>
-            </footer>
-          </div>
-        </header>
       </div>
     </div>
   );
