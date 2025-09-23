@@ -34,10 +34,12 @@ const NewLanding = () => {
     document
       .querySelectorAll('.terminal-line span[data-scramble="true"]')
       .forEach(function (span, index) {
-        const originalText = (span as HTMLElement).textContent || '';
-        originalTexts[index] = originalText;
-        (span as HTMLElement).setAttribute("data-original-text", originalText);
-        (span as HTMLElement).textContent = "";
+        if (span && span.textContent) {
+          const originalText = span.textContent;
+          originalTexts[index] = originalText;
+          (span as HTMLElement).setAttribute("data-original-text", originalText);
+          (span as HTMLElement).textContent = "";
+        }
       });
 
     // Set initial state - make sure terminal lines are initially hidden
@@ -105,24 +107,28 @@ const NewLanding = () => {
 
         // Apply scramble effect to each span
         scrambleSpans.forEach((span) => {
-          const originalText =
-            (span as HTMLElement).getAttribute("data-original-text") || (span as HTMLElement).textContent || '';
+          if (span && span.getAttribute) {
+            const originalText =
+              span.getAttribute("data-original-text") || span.textContent || '';
 
-          // Add scramble effect slightly after the line appears
-          textRevealTl.to(
-            span,
-            {
-              duration: 0.8,
-              scrambleText: {
-                text: originalText,
-                chars: specialChars,
-                revealDelay: 0,
-                speed: 0.3
-              },
-              ease: "none"
-            },
-            timePoint + 0.1
-          );
+            if (originalText) {
+              // Add scramble effect slightly after the line appears
+              textRevealTl.to(
+                span,
+                {
+                  duration: 0.8,
+                  scrambleText: {
+                    text: originalText,
+                    chars: specialChars,
+                    revealDelay: 0,
+                    speed: 0.3
+                  },
+                  ease: "none"
+                },
+                timePoint + 0.1
+              );
+            }
+          }
         });
       });
 
@@ -139,6 +145,12 @@ const NewLanding = () => {
           const allScrambleSpans = document.querySelectorAll(
             'span[data-scramble="true"]'
           );
+          
+          // Only proceed if we have scramble spans available
+          if (allScrambleSpans.length === 0) {
+            return glitchTl;
+          }
+          
           const randomSpans: HTMLElement[] = [];
 
           // Select 3-5 random spans to glitch
@@ -147,30 +159,35 @@ const NewLanding = () => {
             const randomIndex = Math.floor(
               Math.random() * allScrambleSpans.length
             );
-            randomSpans.push(allScrambleSpans[randomIndex] as HTMLElement);
+            const selectedSpan = allScrambleSpans[randomIndex] as HTMLElement;
+            if (selectedSpan) {
+              randomSpans.push(selectedSpan);
+            }
           }
 
           // Apply glitch effect to selected spans
           randomSpans.forEach((span) => {
-            const text =
-              span.textContent || span.getAttribute("data-original-text") || '';
+            if (span && (span.textContent || span.getAttribute("data-original-text"))) {
+              const text =
+                span.textContent || span.getAttribute("data-original-text") || '';
 
-            // Quick scramble for glitch effect
-            glitchTl.to(
-              span,
-              {
-                duration: 0.2,
-                scrambleText: {
-                  text: text,
-                  chars: specialChars,
-                  revealDelay: 0,
-                  speed: 0.1
+              // Quick scramble for glitch effect
+              glitchTl.to(
+                span,
+                {
+                  duration: 0.2,
+                  scrambleText: {
+                    text: text,
+                    chars: specialChars,
+                    revealDelay: 0,
+                    speed: 0.1
+                  },
+                  ease: "none",
+                  repeat: 1
                 },
-                ease: "none",
-                repeat: 1
-              },
-              Math.random() * 0.5
-            );
+                Math.random() * 0.5
+              );
+            }
           });
 
           return glitchTl;
