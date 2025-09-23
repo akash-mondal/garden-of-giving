@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { WalletProvider } from "./contexts/WalletContext";
 import Header from "./components/Header";
-import Landing from "./pages/Landing";
+import NewLanding from './pages/NewLanding';
 import Marketplace from "./pages/Marketplace";
 import EventDetail from "./pages/EventDetail";
 import Dashboard from "./pages/Dashboard";
@@ -23,7 +23,7 @@ const App = () => (
           <div className="min-h-screen">
             <Header />
             <Routes>
-              <Route path="/" element={<Landing />} />
+              <Route path="/" element={<NewLanding />} />
               <Route path="/marketplace" element={<Marketplace />} />
               <Route path="/event/:eventAddress" element={<EventDetail />} />
               <Route path="/dashboard" element={<Dashboard />} />
