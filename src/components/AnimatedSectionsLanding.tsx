@@ -4,6 +4,7 @@ import { gsap } from 'gsap';
 import { Observer } from 'gsap/Observer';
 import { Heart, ArrowRight, Globe, Users } from 'lucide-react';
 import { useWallet } from '../contexts/WalletContext';
+import { useTransition } from '../contexts/TransitionContext';
 import { Button } from './ui/button';
 
 // Import high-quality images
@@ -18,6 +19,7 @@ gsap.registerPlugin(Observer);
 
 const AnimatedSectionsLanding = () => {
   const { connect, isConnected } = useWallet();
+  const { navigateWithTransition } = useTransition();
   const containerRef = useRef<HTMLDivElement>(null);
   const currentIndexRef = useRef(-1);
   const animatingRef = useRef(false);
@@ -111,17 +113,16 @@ const AnimatedSectionsLanding = () => {
 
   const getActionButtons = (index: number) => {
     return (
-      <Link to="/login">
-        <Button 
-          variant="premium" 
-          size="lg"
-          className="mt-8"
-        >
-          <Heart className="w-5 h-5 mr-2" />
-          Login
-          <ArrowRight className="w-5 h-5 ml-2" />
-        </Button>
-      </Link>
+      <Button 
+        variant="premium" 
+        size="lg"
+        className="mt-8"
+        onClick={() => navigateWithTransition('/login')}
+      >
+        <Heart className="w-5 h-5 mr-2" />
+        Login
+        <ArrowRight className="w-5 h-5 ml-2" />
+      </Button>
     );
   };
 
@@ -179,12 +180,12 @@ const AnimatedSectionsLanding = () => {
         <div className="text-white font-shadows text-sm tracking-[0.5em] uppercase">
           Charity Rewards
         </div>
-        <Link 
-          to="/marketplace" 
-          className="text-white/80 hover:text-white transition-colors text-sm tracking-[0.5em] uppercase"
+        <button 
+          onClick={() => navigateWithTransition('/marketplace')}
+          className="text-white/80 hover:text-white transition-colors text-sm tracking-[0.5em] uppercase bg-transparent border-none cursor-pointer"
         >
           Enter Marketplace
-        </Link>
+        </button>
       </header>
 
       {/* Sections */}

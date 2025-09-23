@@ -4,7 +4,10 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { WalletProvider } from "./contexts/WalletContext";
+import { TransitionProvider } from "./contexts/TransitionContext";
 import Navigation from "./components/Navigation";
+import PageTransition from "./components/PageTransition";
+import { usePageTransition } from "./hooks/usePageTransition";
 import AnimatedSectionsLanding from './components/AnimatedSectionsLanding';
 import Marketplace from "./pages/Marketplace";
 import EventDetail from "./pages/EventDetail";
@@ -17,9 +20,14 @@ const queryClient = new QueryClient();
 const AppContent = () => {
   const location = useLocation();
   const isLandingPage = location.pathname === '/';
+  const { isTransitioning, onTransitionComplete } = usePageTransition();
 
   return (
     <div className="min-h-screen">
+      <PageTransition 
+        isTransitioning={isTransitioning}
+        onTransitionComplete={onTransitionComplete}
+      />
       {!isLandingPage && <Navigation />}
       <div className={!isLandingPage ? 'pt-16' : ''}>
         <Routes>
@@ -42,7 +50,9 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <AppContent />
+          <TransitionProvider>
+            <AppContent />
+          </TransitionProvider>
         </BrowserRouter>
       </TooltipProvider>
     </WalletProvider>
