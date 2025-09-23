@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Filter, Grid3X3, List } from 'lucide-react';
-import CharityEventCard from '../components/CharityEventCard';
+import { Search, Filter } from 'lucide-react';
+import GSAPMarketplace from '../components/GSAPMarketplace';
 import GardenParticles from '../components/GardenParticles';
 import { mockCharityEvents } from '../mockData';
 
 const Marketplace = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState<'progress' | 'recent' | 'ending'>('progress');
 
   const filteredEvents = mockCharityEvents
@@ -38,14 +37,14 @@ const Marketplace = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
+          className="text-center mb-16"
         >
-          <h1 className="text-5xl font-shadows text-foreground mb-4">
+          <h1 className="text-6xl lg:text-7xl font-shadows text-foreground mb-6">
             The Garden of Causes
           </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-xl lg:text-2xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
             Discover meaningful campaigns and earn HEART tokens. Transform your compassion into Heart NFTs 
-            that celebrate your generosity.
+            that celebrate your generosity. Hover over campaigns to see their impact.
           </p>
         </motion.div>
 
@@ -54,59 +53,33 @@ const Marketplace = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="card-garden p-6 mb-8"
+          className="card-garden p-8 mb-12"
         >
-          <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+          <div className="flex flex-col lg:flex-row gap-6 items-center justify-between">
             {/* Search */}
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <div className="relative flex-1 max-w-lg">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <input
                 type="text"
-                placeholder="Search causes..."
+                placeholder="Search causes that inspire you..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-background border border-border rounded-full focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
+                className="w-full pl-12 pr-6 py-4 bg-background border border-border rounded-full focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors text-lg"
               />
             </div>
 
-            <div className="flex items-center space-x-4">
-              {/* Sort */}
-              <div className="flex items-center space-x-2">
-                <Filter className="w-5 h-5 text-muted-foreground" />
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as any)}
-                  className="bg-background border border-border rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-                >
-                  <option value="progress">Most Funded</option>
-                  <option value="recent">Recently Added</option>
-                  <option value="ending">Ending Soon</option>
-                </select>
-              </div>
-
-              {/* View Mode */}
-              <div className="flex items-center bg-background border border-border rounded-full p-1">
-                <button
-                  onClick={() => setViewMode('grid')}
-                  className={`p-2 rounded-full transition-colors ${
-                    viewMode === 'grid' 
-                      ? 'bg-primary text-primary-foreground' 
-                      : 'text-muted-foreground hover:text-foreground'
-                  }`}
-                >
-                  <Grid3X3 className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => setViewMode('list')}
-                  className={`p-2 rounded-full transition-colors ${
-                    viewMode === 'list' 
-                      ? 'bg-primary text-primary-foreground' 
-                      : 'text-muted-foreground hover:text-foreground'
-                  }`}
-                >
-                  <List className="w-4 h-4" />
-                </button>
-              </div>
+            {/* Sort */}
+            <div className="flex items-center space-x-3">
+              <Filter className="w-5 h-5 text-muted-foreground" />
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as any)}
+                className="bg-background border border-border rounded-full px-6 py-3 text-base focus:outline-none focus:ring-2 focus:ring-primary/50 cursor-pointer"
+              >
+                <option value="progress">Most Funded</option>
+                <option value="recent">Recently Added</option>
+                <option value="ending">Ending Soon</option>
+              </select>
             </div>
           </div>
         </motion.div>
@@ -116,37 +89,26 @@ const Marketplace = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="mb-6"
+          className="mb-8"
         >
-          <p className="text-muted-foreground">
-            Found <span className="font-nunito font-semibold text-foreground">{filteredEvents.length}</span> campaigns
+          <p className="text-lg text-muted-foreground text-center">
+            Found <span className="font-nunito font-bold text-foreground text-xl">{filteredEvents.length}</span> campaigns
             {searchTerm && (
-              <span> matching "<span className="text-primary">{searchTerm}</span>"</span>
+              <span> matching "<span className="text-primary font-semibold">{searchTerm}</span>"</span>
             )}
+          </p>
+          <p className="text-sm text-muted-foreground text-center mt-2 font-caveat">
+            Hover over campaigns to preview their impact
           </p>
         </motion.div>
 
-        {/* Campaigns Grid */}
+        {/* GSAP Marketplace */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className={`grid gap-8 ${
-            viewMode === 'grid' 
-              ? 'md:grid-cols-2 lg:grid-cols-3' 
-              : 'grid-cols-1 max-w-4xl mx-auto'
-          }`}
         >
-          {filteredEvents.map((event, index) => (
-            <motion.div
-              key={event.eventAddress}
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-            >
-              <CharityEventCard event={event} />
-            </motion.div>
-          ))}
+          <GSAPMarketplace events={filteredEvents} />
         </motion.div>
 
         {/* No Results */}
@@ -154,36 +116,22 @@ const Marketplace = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center py-16"
+            className="text-center py-20"
           >
-            <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Search className="w-12 h-12 text-primary" />
+            <div className="w-32 h-32 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-8">
+              <Search className="w-16 h-16 text-primary" />
             </div>
-            <h3 className="text-2xl font-nunito font-bold text-foreground mb-2">
+            <h3 className="text-3xl font-shadows text-foreground mb-4">
               No campaigns found
             </h3>
-            <p className="text-muted-foreground mb-6">
-              Try adjusting your search terms or browse all available campaigns.
+            <p className="text-lg text-muted-foreground mb-8 max-w-md mx-auto">
+              Try adjusting your search terms or browse all available campaigns to find causes that inspire you.
             </p>
             <button
               onClick={() => setSearchTerm('')}
-              className="btn-garden-primary"
+              className="btn-garden-primary !text-lg !px-8 !py-4"
             >
               Clear Search
-            </button>
-          </motion.div>
-        )}
-
-        {/* Load More (Future Enhancement) */}
-        {filteredEvents.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 }}
-            className="text-center mt-12"
-          >
-            <button className="btn-garden-secondary">
-              Load More Campaigns
             </button>
           </motion.div>
         )}
