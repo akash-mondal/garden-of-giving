@@ -4,7 +4,7 @@ import { Navigate } from 'react-router-dom';
 import { Heart, Trophy, TrendingUp, Vote, Lock, Unlock, Calendar, Award, ExternalLink } from 'lucide-react';
 import { useWallet } from '../contexts/WalletContext';
 import { mockGovernanceProposals, formatAPT } from '../mockData';
-import Garden3D from '../components/Garden3D';
+import GardenGrid from '../components/GardenGrid';
 import GardenParticles from '../components/GardenParticles';
 
 const Dashboard = () => {
@@ -69,7 +69,7 @@ const Dashboard = () => {
           className="h-64 md:h-80 mb-8 relative"
         >
           <div className="absolute inset-0 bg-gradient-radial from-primary/10 via-transparent to-transparent rounded-3xl" />
-          <Garden3D 
+          <GardenGrid 
             donationCount={currentUser.donationCount} 
             totalDonated={currentUser.totalDonatedAPT}
             className="relative z-10"

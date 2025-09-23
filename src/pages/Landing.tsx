@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ArrowDown, Sparkles, Heart, Leaf } from 'lucide-react';
-import Garden3D from '../components/Garden3D';
+import { ArrowDown, Sparkles, Heart, Leaf, Users, Globe, Shield } from 'lucide-react';
+import GardenGrid from '../components/GardenGrid';
 import CharityEventCard from '../components/CharityEventCard';
 import GardenParticles from '../components/GardenParticles';
 import { mockCharityEvents } from '../mockData';
@@ -74,49 +74,64 @@ const Landing = () => {
                 </Link>
               </div>
 
-              {/* Stats */}
+              {/* Platform Features */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.8 }}
-                className="grid grid-cols-3 gap-8 pt-8"
+                className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-8"
               >
-                <div className="text-center lg:text-left">
-                  <div className="text-3xl font-nunito font-bold text-primary">
-                    2.8M
+                <div className="flex items-center space-x-3 p-4 bg-card/50 rounded-2xl border border-border/50">
+                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Shield className="w-5 h-5 text-primary" />
                   </div>
-                  <div className="text-sm text-muted-foreground">
-                    APT Donated
-                  </div>
-                </div>
-                <div className="text-center lg:text-left">
-                  <div className="text-3xl font-nunito font-bold text-primary">
-                    15K+
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    Gardens Planted
+                  <div>
+                    <div className="font-nunito font-semibold text-foreground">
+                      Secure & Transparent
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Blockchain verified
+                    </div>
                   </div>
                 </div>
-                <div className="text-center lg:text-left">
-                  <div className="text-3xl font-nunito font-bold text-primary">
-                    42
+                <div className="flex items-center space-x-3 p-4 bg-card/50 rounded-2xl border border-border/50">
+                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Users className="w-5 h-5 text-primary" />
                   </div>
-                  <div className="text-sm text-muted-foreground">
-                    Active Causes
+                  <div>
+                    <div className="font-nunito font-semibold text-foreground">
+                      Community Driven
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Governance & rewards
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3 p-4 bg-card/50 rounded-2xl border border-border/50">
+                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Globe className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <div className="font-nunito font-semibold text-foreground">
+                      Global Impact
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Worldwide causes
+                    </div>
                   </div>
                 </div>
               </motion.div>
             </motion.div>
 
-            {/* Right Side - 3D Garden */}
+            {/* Right Side - Garden Grid */}
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
               className="relative h-96 lg:h-[500px]"
             >
-              <div className="absolute inset-0 bg-gradient-radial from-primary/20 via-transparent to-transparent rounded-full blur-3xl" />
-              <Garden3D 
+              <div className="absolute inset-0 bg-gradient-radial from-primary/10 via-transparent to-transparent rounded-3xl blur-2xl" />
+              <GardenGrid 
                 donationCount={8} 
                 totalDonated={2847} 
                 className="relative z-10"

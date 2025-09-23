@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Heart, Loader2, CheckCircle, Sparkles } from 'lucide-react';
 import { CharityEvent } from '../types';
 import { formatAPT } from '../mockData';
-import Garden3D from './Garden3D';
+import GardenGrid from './GardenGrid';
 
 interface DonationModalProps {
   isOpen: boolean;
@@ -263,7 +263,7 @@ const DonationModal: React.FC<DonationModalProps> = ({
                   className="p-6 text-center space-y-6"
                 >
                   <div className="h-32 relative">
-                    <Garden3D donationCount={1} totalDonated={parseFloat(amount)} />
+                    <GardenGrid donationCount={1} totalDonated={parseFloat(amount)} />
                   </div>
 
                   <div className="space-y-4">
