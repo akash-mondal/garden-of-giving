@@ -3,8 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Heart, ArrowRight, Sparkles, Globe } from 'lucide-react';
 import { useWallet } from '../contexts/WalletContext';
-import WebGLScene from '../components/WebGLScene';
-import EnhancedWebGL from '../components/EnhancedWebGL';
+import AdvancedBackground from '../components/AdvancedBackground';
 
 const NewLanding = () => {
   const { connect, isConnected } = useWallet();
@@ -43,8 +42,7 @@ const NewLanding = () => {
     <div ref={containerRef} className="relative min-h-screen overflow-hidden">
       {/* Advanced WebGL Background */}
       <Suspense fallback={<div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 -z-10" />}>
-        <WebGLScene />
-        <EnhancedWebGL />
+        <AdvancedBackground />
       </Suspense>
       
       {/* Hero Section */}
