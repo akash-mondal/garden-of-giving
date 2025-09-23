@@ -3,6 +3,7 @@ import { Heart, Trophy, TrendingUp, Calendar } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
 import GardenParticles from '../components/GardenParticles';
+import Rose3D from '../components/Rose3D';
 import { formatAPT } from '../mockData';
 
 const Dashboard = () => {
@@ -54,13 +55,9 @@ const Dashboard = () => {
           className="h-48 md:h-64 lg:h-80 mb-6 md:mb-8 relative flex items-center justify-center"
         >
           <div className="text-center space-y-3 md:space-y-4">
-            <motion.div
-              animate={{ rotate: [0, 360] }}
-              transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-              className="text-5xl md:text-6xl lg:text-8xl mb-3 md:mb-4"
-            >
-              🌻
-            </motion.div>
+            <div className="h-32 md:h-40 lg:h-48 mb-3 md:mb-4 mx-auto">
+              <Rose3D className="w-full h-full" />
+            </div>
             <p className="text-base md:text-lg font-caveat text-primary px-4">
               Your personal garden grows with every donation
             </p>
