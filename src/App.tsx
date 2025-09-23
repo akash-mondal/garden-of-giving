@@ -9,6 +9,7 @@ import AnimatedSectionsLanding from './components/AnimatedSectionsLanding';
 import Marketplace from "./pages/Marketplace";
 import EventDetail from "./pages/EventDetail";
 import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const AppContent = () => {
       <div className={!isLandingPage ? 'pt-16' : ''}>
         <Routes>
           <Route path="/" element={<AnimatedSectionsLanding />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/marketplace" element={<Marketplace />} />
           <Route path="/event/:eventAddress" element={<EventDetail />} />
           <Route path="/dashboard" element={<Dashboard />} />

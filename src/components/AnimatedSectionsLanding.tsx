@@ -110,85 +110,19 @@ const AnimatedSectionsLanding = () => {
   }, [wrap]);
 
   const getActionButtons = (index: number) => {
-    switch(index) {
-      case 0:
-        return (
-          <Button 
-            variant="premium" 
-            size="lg"
-            onClick={() => !animatingRef.current && gotoSection(1, 1)}
-            className="mt-8"
-          >
-            <Heart className="w-5 h-5 mr-2" />
-            Discover Impact
-            <ArrowRight className="w-5 h-5 ml-2" />
-          </Button>
-        );
-      case 1:
-        return (
-          <Button 
-            variant="glass" 
-            size="lg"
-            onClick={() => !animatingRef.current && gotoSection(2, 1)}
-            className="mt-8"
-          >
-            <Globe className="w-5 h-5 mr-2" />
-            See Transparency
-          </Button>
-        );
-      case 2:
-        return (
-          <Button 
-            variant="premium" 
-            size="lg"
-            onClick={() => !animatingRef.current && gotoSection(3, 1)}
-            className="mt-8"
-          >
-            Learn Rewards System
-          </Button>
-        );
-      case 3:
-        return (
-          <Button 
-            variant="glass" 
-            size="lg"
-            onClick={() => !animatingRef.current && gotoSection(4, 1)}
-            className="mt-8"
-          >
-            <Users className="w-5 h-5 mr-2" />
-            Explore Community
-          </Button>
-        );
-      case 4:
-        return (
-          <div className="flex flex-col sm:flex-row gap-4 mt-8">
-            {!isConnected ? (
-              <Button 
-                variant="premium" 
-                size="lg"
-                onClick={connect}
-              >
-                <Heart className="w-5 h-5 mr-2" />
-                Connect Wallet
-              </Button>
-            ) : (
-              <Link to="/marketplace">
-                <Button variant="premium" size="lg">
-                  <Globe className="w-5 h-5 mr-2" />
-                  Enter Marketplace
-                </Button>
-              </Link>
-            )}
-            <Link to="/dashboard">
-              <Button variant="glass" size="lg">
-                View Dashboard
-              </Button>
-            </Link>
-          </div>
-        );
-      default:
-        return null;
-    }
+    return (
+      <Link to="/login">
+        <Button 
+          variant="premium" 
+          size="lg"
+          className="mt-8"
+        >
+          <Heart className="w-5 h-5 mr-2" />
+          Login
+          <ArrowRight className="w-5 h-5 ml-2" />
+        </Button>
+      </Link>
+    );
   };
 
   useEffect(() => {
