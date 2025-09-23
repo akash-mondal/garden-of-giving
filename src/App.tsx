@@ -13,36 +13,38 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const AppContent = () => {
+const ConditionalHeader = () => {
   const location = useLocation();
-  const isLandingPage = location.pathname === '/';
-
-  return (
-    <div className="min-h-screen">
-      {!isLandingPage && <Header />}
-      <Routes>
-        <Route path="/" element={<NewLanding />} />
-        <Route path="/marketplace" element={<Marketplace />} />
-        <Route path="/event/:eventAddress" element={<EventDetail />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </div>
-  );
+  // Don't show header on landing page since it has its own navigation
+  if (location.pathname === '/') {
+    return null;
+  }
+  return <Header />;
 };
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <WalletProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AppContent />
-        </BrowserRouter>
-      </TooltipProvider>
-    </WalletProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <WalletProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <div className="min-h-screen">
+              <ConditionalHeader />
+              <Routes>
+                <Route path="/" element={<NewLanding />} />
+                <Route path="/marketplace" element={<Marketplace />} />
+                <Route path="/event/:eventAddress" element={<EventDetail />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </div>
+          </BrowserRouter>
+        </TooltipProvider>
+      </WalletProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
