@@ -7,7 +7,7 @@ import { useWallet } from '../contexts/WalletContext';
 import { Button } from './ui/button';
 
 // Import high-quality images
-import charityHero1 from '../assets/charity-hero-1.jpg';
+import charityHero1 from '../assets/charity-hero-1-new.jpg';
 import charityHero2 from '../assets/charity-hero-2.jpg';
 import charityHero3 from '../assets/charity-hero-3.jpg';
 import charityHero4 from '../assets/charity-hero-4.jpg';
