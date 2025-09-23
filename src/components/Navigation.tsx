@@ -1,10 +1,18 @@
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Heart, Home, Store, BarChart3 } from 'lucide-react';
-import { useWallet } from '../contexts/WalletContext';
+import { Heart, Home, Store, BarChart3, LogOut, User } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
+import { Button } from './ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 
 const Navigation = () => {
-  const { connect, isConnected } = useWallet();
+  const { user, isAuthenticated, logout } = useAuth();
   const location = useLocation();
 
   const navigation = [
@@ -34,7 +42,7 @@ const Navigation = () => {
           {/* Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">
             {navigation.map(({ name, href, icon: Icon, requiresAuth }) => {
-              if (requiresAuth && !isConnected) return null;
+              if (requiresAuth && !isAuthenticated) return null;
               
               return (
                 <Link
@@ -53,20 +61,47 @@ const Navigation = () => {
             })}
           </div>
 
-          {/* Wallet Connection */}
+          {/* Authentication */}
           <div className="flex items-center">
-            {!isConnected ? (
-              <button
-                onClick={connect}
-                className="btn-garden-primary text-sm"
-              >
-                Connect Wallet
-              </button>
+            {!isAuthenticated ? (
+              <Link to="/login">
+                <Button variant="premium" size="sm">
+                  Login
+                </Button>
+              </Link>
             ) : (
-              <div className="flex items-center space-x-2 px-4 py-2 bg-card rounded-full border border-border">
-                <div className="w-2 h-2 bg-primary rounded-full"></div>
-                <span className="text-sm font-nunito text-foreground">Connected</span>
-              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="flex items-center space-x-2 px-4 py-2">
+                    {user?.avatar ? (
+                      <img 
+                        src={user.avatar} 
+                        alt={user.name}
+                        className="w-6 h-6 rounded-full"
+                      />
+                    ) : (
+                      <User className="w-4 h-4" />
+                    )}
+                    <span className="text-sm font-nunito">{user?.name}</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <div className="flex items-center justify-start gap-2 p-2">
+                    <div className="flex flex-col space-y-1 leading-none">
+                      <p className="font-medium">{user?.name}</p>
+                      <p className="text-xs text-muted-foreground">{user?.email}</p>
+                      <p className="text-xs text-muted-foreground capitalize">
+                        via {user?.loginMethod}
+                      </p>
+                    </div>
+                  </div>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={logout} className="text-red-600 focus:text-red-600">
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
           </div>
         </div>

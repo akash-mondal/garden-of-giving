@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { Observer } from 'gsap/Observer';
 import { Heart, ArrowRight, Globe, Users } from 'lucide-react';
-import { useWallet } from '../contexts/WalletContext';
+import { useAuth } from '../contexts/AuthContext';
 import { Button } from './ui/button';
 
 // Import high-quality images
@@ -17,7 +17,7 @@ import charityHero5 from '../assets/charity-hero-5.jpg';
 gsap.registerPlugin(Observer);
 
 const AnimatedSectionsLanding = () => {
-  const { connect, isConnected } = useWallet();
+  const { isAuthenticated } = useAuth();
   const containerRef = useRef<HTMLDivElement>(null);
   const currentIndexRef = useRef(-1);
   const animatingRef = useRef(false);

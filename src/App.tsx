@@ -3,7 +3,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { WalletProvider } from "./contexts/WalletContext";
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Navigation from "./components/Navigation";
 import AnimatedSectionsLanding from './components/AnimatedSectionsLanding';
 import Marketplace from "./pages/Marketplace";
@@ -24,10 +25,24 @@ const AppContent = () => {
       <div className={!isLandingPage ? 'pt-16' : ''}>
         <Routes>
           <Route path="/" element={<AnimatedSectionsLanding />} />
-          <Route path="/login" element={<Login />} />
+          <Route 
+            path="/login" 
+            element={
+              <ProtectedRoute>
+                <Login />
+              </ProtectedRoute>
+            } 
+          />
           <Route path="/marketplace" element={<Marketplace />} />
           <Route path="/event/:eventAddress" element={<EventDetail />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route 
+            path="/dashboard" 
+            element={
+              <ProtectedRoute requireAuth redirectTo="/login">
+                <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
@@ -37,7 +52,7 @@ const AppContent = () => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <WalletProvider>
+    <AuthProvider>
       <TooltipProvider>
         <Toaster />
         <Sonner />
@@ -45,7 +60,7 @@ const App = () => (
           <AppContent />
         </BrowserRouter>
       </TooltipProvider>
-    </WalletProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 
