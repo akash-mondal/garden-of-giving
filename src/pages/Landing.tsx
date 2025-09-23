@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowDown, Sparkles, Heart, Leaf, Users, Globe, Shield } from 'lucide-react';
-import IsometricGarden from '../components/IsometricGarden';
+import AnimatedTextHero from '../components/AnimatedTextHero';
 import CharityEventCard from '../components/CharityEventCard';
 import GardenParticles from '../components/GardenParticles';
 import { mockCharityEvents } from '../mockData';
@@ -125,18 +125,7 @@ const Landing = () => {
             </motion.div>
 
             {/* Right Side - Interactive Garden */}
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="relative h-[620px] lg:h-[760px] w-full flex items-center justify-center overflow-visible"
-            >
-              <IsometricGarden 
-                donationCount={8} 
-                totalDonated={2847} 
-                className="relative z-10 scale-[1.35] lg:scale-[1.6] w-full"
-              />
-            </motion.div>
+            <AnimatedTextHero className="w-full" />
           </div>
         </div>
 

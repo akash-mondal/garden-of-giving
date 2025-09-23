@@ -4,7 +4,6 @@ import { Navigate } from 'react-router-dom';
 import { Heart, Trophy, TrendingUp, Vote, Lock, Unlock, Calendar, Award, ExternalLink } from 'lucide-react';
 import { useWallet } from '../contexts/WalletContext';
 import { mockGovernanceProposals, formatAPT } from '../mockData';
-import IsometricGarden from '../components/IsometricGarden';
 import GardenParticles from '../components/GardenParticles';
 
 const Dashboard = () => {
@@ -68,16 +67,27 @@ const Dashboard = () => {
           transition={{ delay: 0.2 }}
           className="h-64 md:h-80 mb-8 relative flex items-center justify-center"
         >
-          <div className="absolute inset-0 bg-gradient-radial from-primary/10 via-transparent to-transparent rounded-3xl" />
-          <IsometricGarden 
-            donationCount={currentUser.donationCount} 
-            totalDonated={currentUser.totalDonatedAPT}
-            className="relative z-10"
-          />
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-center">
-            <p className="text-sm text-muted-foreground font-caveat">
-              Your impact is growing beautifully! 🌸
+          <div className="text-center space-y-4">
+            <motion.div
+              animate={{ rotate: [0, 360] }}
+              transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+              className="text-8xl mb-4"
+            >
+              🌻
+            </motion.div>
+            <p className="text-lg font-caveat text-primary">
+              Your personal garden grows with every donation
             </p>
+            <div className="flex items-center justify-center space-x-6 text-sm text-muted-foreground">
+              <div className="flex items-center space-x-1">
+                <span>🌱</span>
+                <span>{currentUser.donationCount} seeds planted</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <span>❤️</span>
+                <span>{currentUser.heartTokens} HEART earned</span>
+              </div>
+            </div>
           </div>
         </motion.div>
 

@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Heart, Loader2, CheckCircle, Sparkles } from 'lucide-react';
 import { CharityEvent } from '../types';
 import { formatAPT } from '../mockData';
-import IsometricGarden from './IsometricGarden';
 
 interface DonationModalProps {
   isOpen: boolean;
@@ -263,7 +262,13 @@ const DonationModal: React.FC<DonationModalProps> = ({
                   className="p-6 text-center space-y-6"
                 >
                   <div className="h-32 relative flex items-center justify-center">
-                    <IsometricGarden donationCount={1} totalDonated={parseFloat(amount)} />
+                    <motion.div
+                      animate={{ scale: [1, 1.2, 1], rotate: [0, 180, 360] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="text-6xl"
+                    >
+                      🌱
+                    </motion.div>
                   </div>
 
                   <div className="space-y-4">
