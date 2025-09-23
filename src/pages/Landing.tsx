@@ -129,13 +129,12 @@ const Landing = () => {
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="relative h-96 lg:h-[500px] flex items-center justify-center"
+              className="relative h-[620px] lg:h-[760px] w-full flex items-center justify-center overflow-visible"
             >
-              <div className="absolute inset-0 bg-gradient-radial from-primary/10 via-transparent to-transparent rounded-3xl blur-2xl" />
               <IsometricGarden 
                 donationCount={8} 
                 totalDonated={2847} 
-                className="relative z-10"
+                className="relative z-10 scale-[1.35] lg:scale-[1.6] w-full"
               />
             </motion.div>
           </div>

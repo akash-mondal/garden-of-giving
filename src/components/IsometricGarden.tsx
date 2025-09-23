@@ -446,7 +446,7 @@ const IsometricGarden: React.FC<IsometricGardenProps> = ({
               >
                 {/* Tile Base */}
                 <div 
-                  className={`w-full h-full relative ${
+                  className={`w-full h-full relative border border-border/40 ${
                     isSelected ? 'shadow-xl shadow-primary/40' : 
                     isHovered ? 'shadow-lg shadow-primary/30' : 'shadow-md shadow-black/10'
                   }`}
