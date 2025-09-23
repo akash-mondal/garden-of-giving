@@ -57,43 +57,79 @@ function SubtleParticles() {
   );
 }
 
-// Interactive sphere that responds to mouse
-function InteractiveSphere() {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const { mouse, viewport } = useThree();
+// Falling stars effect
+function FallingStars() {
+  const count = 80;
+  const positions = useMemo(() => {
+    const pos = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+      const i3 = i * 3;
+      pos[i3] = (Math.random() - 0.5) * 50;     // x
+      pos[i3 + 1] = Math.random() * 30 + 10;    // y (start high)
+      pos[i3 + 2] = (Math.random() - 0.5) * 30; // z
+    }
+    return pos;
+  }, [count]);
 
-  useFrame((state, delta) => {
-    if (meshRef.current) {
-      // Smooth rotation
-      meshRef.current.rotation.y += delta * 0.2;
-      meshRef.current.rotation.x += delta * 0.1;
+  const pointsRef = useRef<THREE.Points>(null);
+  const velocities = useMemo(() => {
+    const vel = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+      const i3 = i * 3;
+      vel[i3] = (Math.random() - 0.5) * 0.02;     // x velocity
+      vel[i3 + 1] = -(Math.random() * 0.1 + 0.05); // y velocity (falling)
+      vel[i3 + 2] = (Math.random() - 0.5) * 0.01;  // z velocity
+    }
+    return vel;
+  }, [count]);
+
+  useFrame(() => {
+    if (pointsRef.current) {
+      const pos = pointsRef.current.geometry.attributes.position.array as Float32Array;
       
-      // Mouse interaction - subtle movement towards cursor
-      const targetX = (mouse.x * viewport.width) / 8;
-      const targetY = (mouse.y * viewport.height) / 8;
+      for (let i = 0; i < pos.length; i += 3) {
+        // Apply velocity
+        pos[i] += velocities[i];         // x
+        pos[i + 1] += velocities[i + 1]; // y
+        pos[i + 2] += velocities[i + 2]; // z
+        
+        // Reset particles that fall below view
+        if (pos[i + 1] < -15) {
+          pos[i] = (Math.random() - 0.5) * 50;
+          pos[i + 1] = Math.random() * 10 + 15;
+          pos[i + 2] = (Math.random() - 0.5) * 30;
+        }
+        
+        // Wrap around sides
+        if (pos[i] > 25) pos[i] = -25;
+        if (pos[i] < -25) pos[i] = 25;
+        if (pos[i + 2] > 15) pos[i + 2] = -15;
+        if (pos[i + 2] < -15) pos[i + 2] = 15;
+      }
       
-      meshRef.current.position.x = THREE.MathUtils.lerp(meshRef.current.position.x, targetX, 0.02);
-      meshRef.current.position.y = THREE.MathUtils.lerp(meshRef.current.position.y, targetY, 0.02);
-      
-      // Subtle pulsing based on mouse distance
-      const mouseDistance = Math.sqrt(mouse.x ** 2 + mouse.y ** 2);
-      const scale = 1 + Math.sin(state.clock.elapsedTime * 2) * 0.05 + (1 - mouseDistance) * 0.1;
-      meshRef.current.scale.setScalar(scale);
+      pointsRef.current.geometry.attributes.position.needsUpdate = true;
     }
   });
 
   return (
-    <mesh ref={meshRef} position={[0, 0, 0]}>
-      <icosahedronGeometry args={[1.2, 1]} />
-      <meshStandardMaterial 
+    <points ref={pointsRef}>
+      <bufferGeometry>
+        <bufferAttribute
+          attach="attributes-position"
+          count={positions.length / 3}
+          array={positions}
+          itemSize={3}
+        />
+      </bufferGeometry>
+      <pointsMaterial
         color="#ff69b4"
-        wireframe
+        size={0.04}
+        sizeAttenuation
         transparent
-        opacity={0.4}
-        emissive="#ff1493"
-        emissiveIntensity={0.1}
+        opacity={0.8}
+        blending={THREE.AdditiveBlending}
       />
-    </mesh>
+    </points>
   );
 }
 
@@ -184,7 +220,7 @@ export default function AdvancedBackground() {
         
         <AmbientDust />
         <SubtleParticles />
-        <InteractiveSphere />
+        <FallingStars />
         <CursorLight />
       </Canvas>
     </div>
