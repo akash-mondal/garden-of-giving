@@ -1,57 +1,59 @@
-import { useRef, Suspense } from 'react';
-import { Canvas, useFrame, useLoader } from '@react-three/fiber';
+import { useRef } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import * as THREE from 'three';
 
-const RoseModel = () => {
+// Simple 3D Rose geometry using basic shapes
+const RoseGeometry = () => {
   const roseRef = useRef<THREE.Group>(null);
   
-  // Load the 3D rose model
-  const obj = useLoader(OBJLoader, 'https://happy358.github.io/Images/Model/red_rose3.obj');
-  
-  // Auto-rotate the rose
   useFrame((state, delta) => {
     if (roseRef.current) {
-      roseRef.current.rotation.y += delta * 0.3;
+      roseRef.current.rotation.y += delta * 0.5;
     }
   });
 
-  // Clone and configure materials for different parts
-  const configureMaterials = (object: THREE.Object3D) => {
-    object.traverse((child) => {
-      if (child instanceof THREE.Mesh) {
-        const baseMaterial = new THREE.MeshStandardMaterial({
-          metalness: 0,
-          roughness: 0.8,
-          side: THREE.DoubleSide
-        });
-
-        if (child.name === 'rose') {
-          child.material = baseMaterial.clone();
-          (child.material as THREE.MeshStandardMaterial).color.set('crimson');
-        } else if (child.name === 'calyx') {
-          child.material = baseMaterial.clone();
-          (child.material as THREE.MeshStandardMaterial).color.set('#001a14');
-        } else if (child.name === 'leaf1' || child.name === 'leaf2') {
-          child.material = baseMaterial.clone();
-          (child.material as THREE.MeshStandardMaterial).color.set('#00331b');
-        } else {
-          child.material = baseMaterial.clone();
-          (child.material as THREE.MeshStandardMaterial).color.set('crimson');
-        }
-      }
-    });
-  };
-
-  // Configure materials when model loads
-  if (obj) {
-    configureMaterials(obj);
-  }
+  // Create rose petals using cylinders and spheres
+  const petalPositions = [
+    [0, 0, 0],
+    [0.3, 0.1, 0.2], 
+    [-0.3, 0.1, 0.2],
+    [0.2, 0.2, -0.3],
+    [-0.2, 0.2, -0.3],
+    [0, 0.3, 0.1]
+  ];
 
   return (
-    <group ref={roseRef} rotation={[0, Math.PI / 1.7, 0]} scale={[1.2, 1.2, 1.2]}>
-      <primitive object={obj} />
+    <group ref={roseRef} scale={[2, 2, 2]}>
+      {/* Rose center */}
+      <mesh position={[0, 0, 0]}>
+        <sphereGeometry args={[0.15, 8, 6]} />
+        <meshStandardMaterial color="#8B0000" />
+      </mesh>
+      
+      {/* Rose petals */}
+      {petalPositions.map((position, index) => (
+        <mesh key={index} position={position as [number, number, number]} rotation={[Math.PI / 4, index * 0.5, 0]}>
+          <cylinderGeometry args={[0.1, 0.25, 0.3, 8]} />
+          <meshStandardMaterial color={index === 0 ? "#DC143C" : "#B22222"} transparent opacity={0.8} />
+        </mesh>
+      ))}
+      
+      {/* Stem */}
+      <mesh position={[0, -0.8, 0]}>
+        <cylinderGeometry args={[0.03, 0.03, 1.2, 8]} />
+        <meshStandardMaterial color="#228B22" />
+      </mesh>
+      
+      {/* Leaves */}
+      <mesh position={[0.2, -0.4, 0]} rotation={[0, 0, Math.PI / 6]}>
+        <planeGeometry args={[0.3, 0.15]} />
+        <meshStandardMaterial color="#32CD32" side={THREE.DoubleSide} />
+      </mesh>
+      <mesh position={[-0.2, -0.6, 0]} rotation={[0, 0, -Math.PI / 6]}>
+        <planeGeometry args={[0.25, 0.12]} />
+        <meshStandardMaterial color="#32CD32" side={THREE.DoubleSide} />
+      </mesh>
     </group>
   );
 };
@@ -65,41 +67,24 @@ const Rose3D = ({ className }: Rose3DProps) => {
     <div className={className}>
       <Canvas
         camera={{ 
-          position: [0, 150, 250], 
-          fov: 33,
-          near: 1,
-          far: 2000
+          position: [2, 2, 4], 
+          fov: 50
         }}
         style={{ background: 'transparent' }}
       >
-        {/* Lighting */}
-        <ambientLight intensity={0.1} color="white" />
-        <pointLight 
-          intensity={0.5} 
-          color="white" 
-          position={[0, 150, 250]} 
-          castShadow 
-        />
-
-        {/* 3D Rose Model */}
-        <Suspense fallback={
-          <mesh>
-            <sphereGeometry args={[20, 16, 16]} />
-            <meshStandardMaterial color="crimson" transparent opacity={0.3} />
-          </mesh>
-        }>
-          <RoseModel />
-        </Suspense>
-
-        {/* Controls */}
+        <ambientLight intensity={0.4} />
+        <pointLight position={[10, 10, 10]} intensity={0.8} />
+        <directionalLight position={[-10, -10, -5]} intensity={0.3} />
+        
+        <RoseGeometry />
+        
         <OrbitControls
-          autoRotate={true}
-          autoRotateSpeed={2}
+          autoRotate={false}
           enableDamping={true}
           enablePan={false}
-          minPolarAngle={0}
-          maxPolarAngle={Math.PI / 2}
           enableZoom={false}
+          maxPolarAngle={Math.PI / 2}
+          minPolarAngle={Math.PI / 4}
         />
       </Canvas>
     </div>

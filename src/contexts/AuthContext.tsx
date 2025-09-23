@@ -48,53 +48,71 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+export const AuthProvider = ({ children }: AuthProviderProps) => {
+  // Initialize state with default values to avoid null issues
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // Check for existing session on mount
   useEffect(() => {
-    const savedUser = localStorage.getItem('auth_user');
-    if (savedUser) {
-      try {
-        setUser(JSON.parse(savedUser));
-      } catch (error) {
-        console.error('Error parsing saved user:', error);
-        localStorage.removeItem('auth_user');
+    try {
+      const savedUser = localStorage.getItem('auth_user');
+      if (savedUser) {
+        const parsedUser = JSON.parse(savedUser);
+        if (parsedUser && parsedUser.id) {
+          setUser(parsedUser);
+        }
       }
+    } catch (error) {
+      console.error('Error parsing saved user:', error);
+      localStorage.removeItem('auth_user');
     }
   }, []);
 
-  const loginWithWallet = async () => {
-    setIsLoading(true);
-    
-    // Simulate wallet connection delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    setUser(mockWalletUser);
-    localStorage.setItem('auth_user', JSON.stringify(mockWalletUser));
-    setIsLoading(false);
+  const loginWithWallet = async (): Promise<void> => {
+    try {
+      setIsLoading(true);
+      
+      // Simulate wallet connection delay
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      setUser(mockWalletUser);
+      localStorage.setItem('auth_user', JSON.stringify(mockWalletUser));
+    } catch (error) {
+      console.error('Wallet login error:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const loginWithGoogle = async () => {
-    setIsLoading(true);
-    
-    // Simulate Google OAuth delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    setUser(mockGoogleUser);
-    localStorage.setItem('auth_user', JSON.stringify(mockGoogleUser));
-    setIsLoading(false);
+  const loginWithGoogle = async (): Promise<void> => {
+    try {
+      setIsLoading(true);
+      
+      // Simulate Google OAuth delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      setUser(mockGoogleUser);
+      localStorage.setItem('auth_user', JSON.stringify(mockGoogleUser));
+    } catch (error) {
+      console.error('Google login error:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('auth_user');
+  const logout = (): void => {
+    try {
+      setUser(null);
+      localStorage.removeItem('auth_user');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   const value: AuthContextType = {
     user,
-    isAuthenticated: !!user,
+    isAuthenticated: Boolean(user),
     isLoading,
     loginWithWallet,
     loginWithGoogle,
