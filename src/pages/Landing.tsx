@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowDown, Sparkles, Heart, Leaf, Users, Globe, Shield } from 'lucide-react';
-import InteractiveGarden from '../components/InteractiveGarden';
+import ZenGarden from '../components/InteractiveGarden';
 import CharityEventCard from '../components/CharityEventCard';
 import GardenParticles from '../components/GardenParticles';
 import { mockCharityEvents } from '../mockData';
@@ -131,7 +131,7 @@ const Landing = () => {
               className="relative h-96 lg:h-[500px] flex items-center justify-center"
             >
               <div className="absolute inset-0 bg-gradient-radial from-primary/10 via-transparent to-transparent rounded-3xl blur-2xl" />
-              <InteractiveGarden 
+              <ZenGarden 
                 donationCount={8} 
                 totalDonated={2847} 
                 className="relative z-10"

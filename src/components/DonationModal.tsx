@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Heart, Loader2, CheckCircle, Sparkles } from 'lucide-react';
 import { CharityEvent } from '../types';
 import { formatAPT } from '../mockData';
-import InteractiveGarden from './InteractiveGarden';
+import ZenGarden from './InteractiveGarden';
 
 interface DonationModalProps {
   isOpen: boolean;
@@ -263,7 +263,7 @@ const DonationModal: React.FC<DonationModalProps> = ({
                   className="p-6 text-center space-y-6"
                 >
                   <div className="h-32 relative flex items-center justify-center">
-                    <InteractiveGarden donationCount={1} totalDonated={parseFloat(amount)} />
+                    <ZenGarden donationCount={1} totalDonated={parseFloat(amount)} />
                   </div>
 
                   <div className="space-y-4">

@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Canvas as FabricCanvas, Circle, Path, Point } from 'fabric';
+import { Canvas as FabricCanvas } from 'fabric';
 
-interface InteractiveGardenProps {
+interface ZenGardenProps {
   donationCount?: number;
   totalDonated?: number;
   className?: string;
@@ -19,18 +19,7 @@ interface Flower {
   angle: number;
 }
 
-interface Particle {
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  life: number;
-  maxLife: number;
-  color: string;
-  size: number;
-}
-
-const InteractiveGarden: React.FC<InteractiveGardenProps> = ({ 
+const ZenGarden: React.FC<ZenGardenProps> = ({ 
   donationCount = 0, 
   totalDonated = 0,
   className = ""
@@ -39,12 +28,9 @@ const InteractiveGarden: React.FC<InteractiveGardenProps> = ({
   const animationRef = useRef<number>();
   const [canvas, setCanvas] = useState<FabricCanvas | null>(null);
   const [flowers, setFlowers] = useState<Flower[]>([]);
-  const [particles, setParticles] = useState<Particle[]>([]);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [isHovered, setIsHovered] = useState(false);
 
-  // Calculate garden growth
-  const maxFlowers = Math.min(Math.floor(donationCount * 1.5), 12);
+  // Calculate garden growth - always show at least 3 flowers
+  const maxFlowers = Math.min(Math.floor(donationCount * 1.5) + 3, 12);
   const gardenMaturity = Math.min(totalDonated / 5000, 1);
 
   const flowerColors = [
@@ -55,7 +41,7 @@ const InteractiveGarden: React.FC<InteractiveGardenProps> = ({
     '#DDA0DD', // Plum
     '#98FB98', // Pale green
     '#87CEEB', // Sky blue
-    '#DDA0DD', // Plum
+    '#FFA07A', // Light salmon
   ];
 
   // Generate flowers based on donations
@@ -72,7 +58,7 @@ const InteractiveGarden: React.FC<InteractiveGardenProps> = ({
         y: centerY + Math.sin(angle) * radius + (Math.random() - 0.5) * 40,
         size: 8 + Math.random() * 12,
         color: flowerColors[i % flowerColors.length],
-        bloomStage: Math.min(i / Math.max(donationCount, 1), 1),
+        bloomStage: 1, // Always fully bloomed for zen garden
         petals: 5 + Math.floor(Math.random() * 3),
         stemHeight: 20 + Math.random() * 15,
         angle: Math.random() * Math.PI * 2
@@ -102,7 +88,7 @@ const InteractiveGarden: React.FC<InteractiveGardenProps> = ({
     };
   }, []);
 
-  // Animation loop
+  // Animation loop - gentle and peaceful
   useEffect(() => {
     if (!canvas) return;
 
@@ -127,107 +113,63 @@ const InteractiveGarden: React.FC<InteractiveGardenProps> = ({
       ctx.fillStyle = groundGradient;
       ctx.fillRect(0, 250, 400, 50);
 
-      // Draw flowers
+      // Draw zen elements - rocks
+      ctx.fillStyle = 'rgba(128, 128, 128, 0.4)';
+      ctx.beginPath();
+      ctx.ellipse(100, 200, 15, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.beginPath();
+      ctx.ellipse(320, 220, 12, 7, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Draw flowers with gentle sway
       flowers.forEach((flower, index) => {
-        const time = timestamp * 0.001;
-        const sway = Math.sin(time + index) * 2;
-        const growth = Math.min(flower.bloomStage * 2, 1);
+        const time = timestamp * 0.0005; // Very slow movement
+        const sway = Math.sin(time + index) * 1; // Gentle sway
         
-        if (growth > 0) {
-          // Draw stem
-          ctx.strokeStyle = 'rgba(34, 139, 34, 0.8)';
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.moveTo(flower.x, flower.y + flower.stemHeight);
-          ctx.lineTo(flower.x + sway, flower.y + flower.stemHeight - flower.stemHeight * growth);
-          ctx.stroke();
-
-          // Draw flower center
-          const flowerX = flower.x + sway;
-          const flowerY = flower.y + flower.stemHeight - flower.stemHeight * growth;
-          
-          // Petals
-          ctx.fillStyle = flower.color;
-          for (let p = 0; p < flower.petals; p++) {
-            const petalAngle = (p / flower.petals) * Math.PI * 2 + flower.angle;
-            const petalX = flowerX + Math.cos(petalAngle) * flower.size * growth;
-            const petalY = flowerY + Math.sin(petalAngle) * flower.size * growth * 0.6;
-            
-            ctx.beginPath();
-            ctx.ellipse(petalX, petalY, flower.size * 0.3 * growth, flower.size * 0.6 * growth, petalAngle, 0, Math.PI * 2);
-            ctx.fill();
-          }
-
-          // Flower center
-          ctx.fillStyle = '#FFD700';
-          ctx.beginPath();
-          ctx.arc(flowerX, flowerY, flower.size * 0.3 * growth, 0, Math.PI * 2);
-          ctx.fill();
-
-          // Glow effect when hovered
-          if (isHovered) {
-            const distance = Math.sqrt((mousePos.x - flowerX) ** 2 + (mousePos.y - flowerY) ** 2);
-            if (distance < 50) {
-              ctx.shadowColor = flower.color;
-              ctx.shadowBlur = 20;
-              ctx.beginPath();
-              ctx.arc(flowerX, flowerY, flower.size * 0.4 * growth, 0, Math.PI * 2);
-              ctx.fill();
-              ctx.shadowBlur = 0;
-            }
-          }
-        }
-      });
-
-      // Update and draw particles
-      if (isHovered) {
-        // Add new particles near mouse
-        if (Math.random() < 0.3) {
-          particles.push({
-            x: mousePos.x + (Math.random() - 0.5) * 20,
-            y: mousePos.y + (Math.random() - 0.5) * 20,
-            vx: (Math.random() - 0.5) * 2,
-            vy: -Math.random() * 3 - 1,
-            life: 60,
-            maxLife: 60,
-            color: flowerColors[Math.floor(Math.random() * flowerColors.length)],
-            size: 2 + Math.random() * 3
-          });
-        }
-      }
-
-      // Update particles
-      setParticles(prev => prev
-        .map(particle => ({
-          ...particle,
-          x: particle.x + particle.vx,
-          y: particle.y + particle.vy,
-          vy: particle.vy + 0.1, // gravity
-          life: particle.life - 1
-        }))
-        .filter(particle => particle.life > 0)
-      );
-
-      // Draw particles
-      particles.forEach(particle => {
-        const alpha = particle.life / particle.maxLife;
-        ctx.fillStyle = particle.color.replace(')', `, ${alpha})`).replace('rgb', 'rgba');
+        // Draw stem
+        ctx.strokeStyle = 'rgba(34, 139, 34, 0.8)';
+        ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.size * alpha, 0, Math.PI * 2);
+        ctx.moveTo(flower.x, flower.y + flower.stemHeight);
+        ctx.lineTo(flower.x + sway, flower.y);
+        ctx.stroke();
+
+        // Draw flower
+        const flowerX = flower.x + sway;
+        const flowerY = flower.y;
+        
+        // Petals
+        ctx.fillStyle = flower.color;
+        for (let p = 0; p < flower.petals; p++) {
+          const petalAngle = (p / flower.petals) * Math.PI * 2 + flower.angle;
+          const petalX = flowerX + Math.cos(petalAngle) * flower.size;
+          const petalY = flowerY + Math.sin(petalAngle) * flower.size * 0.6;
+          
+          ctx.beginPath();
+          ctx.ellipse(petalX, petalY, flower.size * 0.3, flower.size * 0.6, petalAngle, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Flower center
+        ctx.fillStyle = '#FFD700';
+        ctx.beginPath();
+        ctx.arc(flowerX, flowerY, flower.size * 0.3, 0, Math.PI * 2);
         ctx.fill();
       });
 
-      // Draw magical sparkles based on donation amount
-      const sparkleCount = Math.floor(gardenMaturity * 10);
+      // Draw gentle sparkles based on donation amount
+      const sparkleCount = Math.floor(gardenMaturity * 8) + 2;
       for (let i = 0; i < sparkleCount; i++) {
-        const sparkleTime = timestamp * 0.003 + i;
-        const sparkleX = 50 + (i * 37) % 300;
-        const sparkleY = 50 + Math.sin(sparkleTime) * 30 + (i * 23) % 100;
-        const sparkleAlpha = (Math.sin(sparkleTime * 2) + 1) * 0.3;
+        const sparkleTime = timestamp * 0.002 + i;
+        const sparkleX = 50 + (i * 43) % 300;
+        const sparkleY = 50 + Math.sin(sparkleTime) * 20 + (i * 29) % 100;
+        const sparkleAlpha = (Math.sin(sparkleTime) + 1) * 0.2;
         
         ctx.fillStyle = `rgba(255, 255, 255, ${sparkleAlpha})`;
         ctx.beginPath();
-        ctx.arc(sparkleX, sparkleY, 2, 0, Math.PI * 2);
+        ctx.arc(sparkleX, sparkleY, 1.5, 0, Math.PI * 2);
         ctx.fill();
       }
 
@@ -242,18 +184,7 @@ const InteractiveGarden: React.FC<InteractiveGardenProps> = ({
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [canvas, flowers, particles, mousePos, isHovered, gardenMaturity]);
-
-  // Mouse interaction
-  const handleMouseMove = (e: React.MouseEvent) => {
-    const rect = canvasRef.current?.getBoundingClientRect();
-    if (rect) {
-      setMousePos({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
-      });
-    }
-  };
+  }, [canvas, flowers, gardenMaturity]);
 
   return (
     <div className={`relative ${className}`}>
@@ -262,13 +193,10 @@ const InteractiveGarden: React.FC<InteractiveGardenProps> = ({
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.8 }}
         className="relative"
-        onMouseMove={handleMouseMove}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
       >
         <canvas 
           ref={canvasRef}
-          className="rounded-3xl shadow-[var(--shadow-garden)] border border-border/20 cursor-none bg-gradient-to-b from-sky-50/30 to-green-50/30"
+          className="rounded-3xl shadow-[var(--shadow-garden)] border border-border/20 bg-gradient-to-b from-sky-50/30 to-green-50/30"
           style={{ maxWidth: '100%', height: 'auto' }}
         />
         
@@ -281,27 +209,13 @@ const InteractiveGarden: React.FC<InteractiveGardenProps> = ({
         >
           <div className="bg-card/90 backdrop-blur-sm px-4 py-2 rounded-full border border-border/50 shadow-sm">
             <p className="text-sm font-caveat text-primary font-semibold">
-              {maxFlowers === 0 ? "Plant your first seed!" : 
-               maxFlowers < 3 ? "Your garden is sprouting 🌱" :
-               maxFlowers < 6 ? "Beautiful blooms emerging 🌸" :
-               maxFlowers < 9 ? "Garden flourishing 🌺" :
-               "Paradise garden achieved! 🌷"}
+              {maxFlowers <= 3 ? "Your zen garden awaits 🌱" : 
+               maxFlowers < 6 ? "Peaceful blooms growing 🌸" :
+               maxFlowers < 9 ? "Tranquil garden flourishing 🌺" :
+               "Perfect harmony achieved 🌷"}
             </p>
             <p className="text-xs text-muted-foreground">
-              {maxFlowers} flowers • {Math.round(gardenMaturity * 100)}% mature
-            </p>
-          </div>
-        </motion.div>
-
-        {/* Hover instruction */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: isHovered ? 0 : 0.7 }}
-          className="absolute inset-0 flex items-center justify-center pointer-events-none"
-        >
-          <div className="bg-background/80 backdrop-blur-sm px-4 py-2 rounded-full border border-border/50">
-            <p className="text-sm font-caveat text-muted-foreground">
-              Hover to bring magic to your garden ✨
+              {maxFlowers} flowers • Zen mode
             </p>
           </div>
         </motion.div>
@@ -310,4 +224,4 @@ const InteractiveGarden: React.FC<InteractiveGardenProps> = ({
   );
 };
 
-export default InteractiveGarden;
+export default ZenGarden;
