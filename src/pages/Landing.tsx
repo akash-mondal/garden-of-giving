@@ -49,8 +49,9 @@ const Landing = () => {
                 </h1>
 
                 <p className="text-xl text-muted-foreground max-w-2xl">
-                  Nurture a digital garden of giving and earn rewards for your compassion 
-                  on the Aptos blockchain. Watch your impact grow with every donation.
+                  Receive HEART tokens for every donation and unlock special milestone bonuses 
+                  with seeds to grow in your virtual garden. Transform compassion into lasting impact 
+                  on the Aptos blockchain.
                 </p>
               </div>
 
