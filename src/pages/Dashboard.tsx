@@ -1,15 +1,12 @@
-import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Navigate } from 'react-router-dom';
-import { Heart, Trophy, TrendingUp, Vote, Lock, Unlock, Calendar, Award, ExternalLink } from 'lucide-react';
+import { Heart, Trophy, TrendingUp, Calendar } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { mockGovernanceProposals, formatAPT } from '../mockData';
+import { Navigate } from 'react-router-dom';
 import GardenParticles from '../components/GardenParticles';
+import { formatAPT } from '../mockData';
 
 const Dashboard = () => {
   const { isAuthenticated, user } = useAuth();
-  const [activeTab, setActiveTab] = useState<'impact' | 'badges' | 'staking' | 'governance'>('impact');
-  const [stakingAmount, setStakingAmount] = useState<string>('');
 
   // Redirect if not authenticated
   if (!isAuthenticated || !user) {
@@ -23,55 +20,12 @@ const Dashboard = () => {
     donationCount: 12,
     heartTokens: 850,
     stakedHeartTokens: 250,
-    nftBadges: [
-      {
-        tokenId: '1',
-        name: 'First Donor',
-        description: 'Made your first donation',
-        imageUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=badge1',
-        dateEarned: '2024-03-01'
-      },
-      {
-        tokenId: '2', 
-        name: 'Ocean Protector',
-        description: 'Donated to marine conservation',
-        imageUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=badge2',
-        dateEarned: '2024-03-10'
-      },
-      {
-        tokenId: '3',
-        name: 'Forest Guardian',
-        description: 'Supported reforestation efforts',
-        imageUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=badge3', 
-        dateEarned: '2024-03-15'
-      }
+    recentDonations: [
+      { campaign: 'Coral Reef Restoration', amount: 150, date: '2024-03-15' },
+      { campaign: 'Amazon Forest Protection', amount: 75, date: '2024-03-10' },
+      { campaign: 'Clean Water Wells', amount: 200, date: '2024-03-05' },
     ]
   };
-
-  const stakingAPY = 12.5; // 12.5% APY for staking
-  const availableToStake = mockUserData.heartTokens - mockUserData.stakedHeartTokens;
-
-  const handleStake = () => {
-    // Mock staking functionality
-    console.log(`Staking ${stakingAmount} HEART tokens`);
-    setStakingAmount('');
-  };
-
-  const handleUnstake = () => {
-    // Mock unstaking functionality
-    console.log('Unstaking HEART tokens');
-  };
-
-  const handleVote = (proposalId: number, vote: 'for' | 'against') => {
-    console.log(`Voting ${vote} on proposal ${proposalId}`);
-  };
-
-  const tabs = [
-    { id: 'impact', label: 'My Impact', icon: TrendingUp },
-    { id: 'badges', label: 'My Badges', icon: Award },
-    { id: 'staking', label: 'Staking', icon: Lock },
-    { id: 'governance', label: 'Governance', icon: Vote },
-  ];
 
   return (
     <div className="relative min-h-screen py-8">
@@ -110,16 +64,16 @@ const Dashboard = () => {
             <p className="text-lg font-caveat text-primary">
               Your personal garden grows with every donation
             </p>
-              <div className="flex items-center space-x-6 text-sm text-muted-foreground">
-                <div className="flex items-center space-x-1">
-                  <span>🌱</span>
-                  <span>{mockUserData.donationCount} seeds planted</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <span>❤️</span>
-                  <span>{mockUserData.heartTokens} HEART earned</span>
-                </div>
+            <div className="flex items-center justify-center space-x-6 text-sm text-muted-foreground">
+              <div className="flex items-center space-x-1">
+                <span>🌱</span>
+                <span>{mockUserData.donationCount} seeds planted</span>
               </div>
+              <div className="flex items-center space-x-1">
+                <span>❤️</span>
+                <span>{mockUserData.heartTokens} HEART earned</span>
+              </div>
+            </div>
           </div>
         </motion.div>
 
@@ -150,7 +104,7 @@ const Dashboard = () => {
               color: 'text-primary'
             },
             {
-              icon: Lock,
+              icon: TrendingUp,
               label: 'Staked HEART', 
               value: mockUserData.stakedHeartTokens.toString(),
               color: 'text-primary'
@@ -174,305 +128,132 @@ const Dashboard = () => {
           ))}
         </motion.div>
 
-        {/* Tab Navigation */}
+        {/* Impact Summary - Integrated from removed tab */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="flex flex-wrap justify-center gap-2 mb-8"
+          transition={{ delay: 0.8 }}
+          className="grid lg:grid-cols-2 gap-8"
         >
-          {tabs.map(({ id, label, icon: Icon }) => (
-            <button
-              key={id}
-              onClick={() => setActiveTab(id as any)}
-              className={`flex items-center space-x-2 px-6 py-3 rounded-full transition-all duration-300 ${
-                activeTab === id
-                  ? 'bg-primary text-primary-foreground shadow-[0_0_20px_hsl(var(--vibrant-rose)/0.4)]'
-                  : 'bg-card text-foreground hover:bg-primary/10'
-              }`}
-            >
-              <Icon className="w-4 h-4" />
-              <span className="font-nunito font-medium">{label}</span>
-            </button>
-          ))}
-        </motion.div>
-
-        {/* Tab Content */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="card-garden p-6"
-        >
-          {/* My Impact Tab */}
-          {activeTab === 'impact' && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-nunito font-bold text-foreground">
-                Your Impact Summary
-              </h2>
-              
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <h3 className="text-lg font-nunito font-semibold text-foreground">
-                    Donation History
-                  </h3>
-                  <div className="space-y-3">
-                    {/* Mock donation history */}
-                    {[
-                      { campaign: 'Coral Reef Restoration', amount: 150, date: '2024-03-15' },
-                      { campaign: 'Amazon Forest Protection', amount: 75, date: '2024-03-10' },
-                      { campaign: 'Clean Water Wells', amount: 200, date: '2024-03-05' },
-                    ].map((donation, index) => (
-                      <div key={index} className="flex justify-between items-center p-4 bg-background rounded-xl">
-                        <div>
-                          <p className="font-nunito font-semibold text-foreground">
-                            {donation.campaign}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {new Date(donation.date).toLocaleDateString()}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-nunito font-bold text-primary">
-                            {formatAPT(donation.amount)} APT
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            +{donation.amount * 2} HEART
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <h3 className="text-lg font-nunito font-semibold text-foreground">
-                    Impact Metrics
-                  </h3>
-                  <div className="space-y-3">
-                    <div className="p-4 bg-mint-soft/20 rounded-xl border border-mint-soft/50">
-                      <div className="flex items-center space-x-2 mb-2">
-                        <Heart className="w-5 h-5 text-primary" fill="currentColor" />
-                        <span className="font-nunito font-semibold">Environmental Impact</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        Your donations have helped plant 145 trees and protect 2.3 acres of ocean.
-                      </p>
-                    </div>
-                    <div className="p-4 bg-primary/10 rounded-xl border border-primary/20">
-                      <div className="flex items-center space-x-2 mb-2">
-                        <Trophy className="w-5 h-5 text-primary" />
-                        <span className="font-nunito font-semibold">Community Impact</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        You've helped provide clean water access to 47 families.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* My Badges Tab */}
-          {activeTab === 'badges' && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-nunito font-bold text-foreground">
-                Your Achievement Badges
-              </h2>
-              
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {mockUserData.nftBadges.map((badge) => (
-                  <motion.div
-                    key={badge.tokenId}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    whileHover={{ scale: 1.05 }}
-                    className="card-garden p-6 text-center space-y-4"
-                  >
-                    <div className="w-20 h-20 mx-auto rounded-full overflow-hidden">
-                      <img
-                        src={badge.imageUrl}
-                        alt={badge.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div>
-                      <h3 className="font-nunito font-bold text-foreground mb-1">
-                        {badge.name}
-                      </h3>
-                      <p className="text-sm text-muted-foreground mb-2">
-                        {badge.description}
-                      </p>
-                      <p className="text-xs text-primary font-caveat">
-                        Earned {new Date(badge.dateEarned).toLocaleDateString()}
-                      </p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Staking Tab */}
-          {activeTab === 'staking' && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-nunito font-bold text-foreground">
-                HEART Token Staking
-              </h2>
-              
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div className="p-6 bg-primary/5 rounded-2xl border border-primary/20">
-                    <h3 className="text-lg font-nunito font-semibold text-foreground mb-4">
-                      Stake HEART Tokens
-                    </h3>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-nunito font-medium text-foreground mb-2">
-                          Amount to Stake
-                        </label>
-                        <input
-                          type="number"
-                          placeholder="0"
-                          value={stakingAmount}
-                          onChange={(e) => setStakingAmount(e.target.value)}
-                          max={availableToStake}
-                          className="w-full p-3 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50"
-                        />
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Available: {availableToStake} HEART
-                        </p>
-                      </div>
-                      <button
-                        onClick={handleStake}
-                        disabled={!stakingAmount || parseFloat(stakingAmount) <= 0}
-                        className="w-full btn-garden-primary disabled:opacity-50"
-                      >
-                        <Lock className="w-4 h-4 mr-2" />
-                        Stake Tokens
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="p-4 bg-background rounded-xl border border-border">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm text-muted-foreground">APY</span>
-                      <span className="text-lg font-nunito font-bold text-primary">
-                        {stakingAPY}%
-                      </span>
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      Staking increases your reward rate by 1.2x!
+          {/* Recent Donations */}
+          <div className="card-garden p-6">
+            <h2 className="text-2xl font-nunito font-bold text-foreground mb-6">
+              Recent Donation History
+            </h2>
+            
+            <div className="space-y-4">
+              {mockUserData.recentDonations.map((donation, index) => (
+                <motion.div 
+                  key={index}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.9 + index * 0.1 }}
+                  className="flex justify-between items-center p-4 bg-background rounded-xl border border-border hover:border-primary/20 transition-colors"
+                >
+                  <div>
+                    <p className="font-nunito font-semibold text-foreground">
+                      {donation.campaign}
+                    </p>
+                    <p className="text-sm text-muted-foreground flex items-center space-x-1">
+                      <Calendar className="w-4 h-4" />
+                      <span>{new Date(donation.date).toLocaleDateString()}</span>
                     </p>
                   </div>
-                </div>
-
-                <div className="space-y-4">
-                  <h3 className="text-lg font-nunito font-semibold text-foreground">
-                    Your Staking Position
-                  </h3>
-                  
-                  <div className="p-6 bg-card rounded-2xl border border-border space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Staked Amount</span>
-                      <span className="font-nunito font-bold text-primary">
-                        {mockUserData.stakedHeartTokens} HEART
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Est. Annual Rewards</span>
-                      <span className="font-nunito font-bold text-primary">
-                        {Math.floor(mockUserData.stakedHeartTokens * (stakingAPY / 100))} HEART
-                      </span>
-                    </div>
-                    
-                    {mockUserData.stakedHeartTokens > 0 && (
-                      <button
-                        onClick={handleUnstake}
-                        className="w-full btn-garden-secondary flex items-center justify-center space-x-2"
-                      >
-                        <Unlock className="w-4 h-4" />
-                        <span>Unstake Tokens</span>
-                      </button>
-                    )}
+                  <div className="text-right">
+                    <p className="font-nunito font-bold text-primary">
+                      {formatAPT(donation.amount)} APT
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      +{donation.amount * 2} HEART
+                    </p>
                   </div>
-                </div>
-              </div>
+                </motion.div>
+              ))}
             </div>
-          )}
+          </div>
 
-          {/* Governance Tab */}
-          {activeTab === 'governance' && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-nunito font-bold text-foreground">
-                Community Governance
-              </h2>
+          {/* Impact Metrics */}
+          <div className="card-garden p-6">
+            <h2 className="text-2xl font-nunito font-bold text-foreground mb-6">
+              Your Impact Metrics
+            </h2>
+            
+            <div className="space-y-4">
+              <motion.div 
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 1.0 }}
+                className="p-4 bg-mint-soft/20 rounded-xl border border-mint-soft/50"
+              >
+                <div className="flex items-center space-x-2 mb-2">
+                  <Heart className="w-5 h-5 text-primary" fill="currentColor" />
+                  <span className="font-nunito font-semibold">Environmental Impact</span>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Your donations have helped plant 145 trees and protect 2.3 acres of ocean.
+                </p>
+              </motion.div>
               
-              <div className="space-y-4">
-                {mockGovernanceProposals.map((proposal) => (
-                  <div key={proposal.proposalId} className="p-6 bg-background rounded-2xl border border-border">
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex-1">
-                        <h3 className="text-lg font-nunito font-bold text-foreground mb-2">
-                          {proposal.title}
-                        </h3>
-                        <p className="text-muted-foreground text-sm mb-3">
-                          {proposal.description}
-                        </p>
-                        <div className="flex items-center space-x-4 text-xs text-muted-foreground">
-                          <span>By {proposal.proposer}</span>
-                          <span className={`px-2 py-1 rounded-full ${
-                            proposal.status === 'active' 
-                              ? 'bg-primary/20 text-primary' 
-                              : proposal.status === 'passed'
-                              ? 'bg-mint-soft text-green-600'
-                              : 'bg-destructive/20 text-destructive'
-                          }`}>
-                            {proposal.status.toUpperCase()}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
+              <motion.div 
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 1.1 }}
+                className="p-4 bg-primary/10 rounded-xl border border-primary/20"
+              >
+                <div className="flex items-center space-x-2 mb-2">
+                  <Trophy className="w-5 h-5 text-primary" />
+                  <span className="font-nunito font-semibold">Community Impact</span>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  You've helped provide clean water access to 47 families.
+                </p>
+              </motion.div>
 
-                    {/* Vote Results */}
-                    <div className="space-y-3">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-green-600">For: {proposal.votesFor.toLocaleString()}</span>
-                        <span className="text-red-600">Against: {proposal.votesAgainst.toLocaleString()}</span>
-                      </div>
-                      
-                      <div className="w-full bg-border rounded-full h-2 overflow-hidden">
-                        <div 
-                          className="h-full bg-green-500"
-                          style={{ 
-                            width: `${(proposal.votesFor / (proposal.votesFor + proposal.votesAgainst)) * 100}%` 
-                          }}
-                        />
-                      </div>
-
-                      {proposal.status === 'active' && (
-                        <div className="flex space-x-3 pt-2">
-                          <button
-                            onClick={() => handleVote(proposal.proposalId, 'for')}
-                            className="flex-1 btn-garden-primary !py-2 !text-sm"
-                          >
-                            Vote For
-                          </button>
-                          <button
-                            onClick={() => handleVote(proposal.proposalId, 'against')}
-                            className="flex-1 btn-garden-secondary !py-2 !text-sm"
-                          >
-                            Vote Against
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <motion.div 
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 1.2 }}
+                className="p-4 bg-background/50 rounded-xl border border-border"
+              >
+                <div className="flex items-center space-x-2 mb-2">
+                  <TrendingUp className="w-5 h-5 text-primary" />
+                  <span className="font-nunito font-semibold">Growing Impact</span>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Your impact score has increased by 15% this month. Keep donating!
+                </p>
+              </motion.div>
             </div>
-          )}
+          </div>
+        </motion.div>
+
+        {/* Quick Actions */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.3 }}
+          className="mt-12 text-center"
+        >
+          <div className="card-garden p-8 bg-primary/5 border-primary/20">
+            <div className="text-6xl mb-4">🚀</div>
+            <h3 className="text-2xl font-nunito font-bold text-foreground mb-4">
+              Ready to Make More Impact?
+            </h3>
+            <p className="text-muted-foreground mb-6">
+              Explore new campaigns, manage your staking, or participate in governance.
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <a href="/marketplace" className="btn-garden-primary">
+                Browse Campaigns
+              </a>
+              <a href="/staking" className="btn-garden-secondary">
+                Manage Staking
+              </a>
+              <a href="/governance" className="btn-garden-secondary">
+                Vote on Proposals
+              </a>
+            </div>
+          </div>
         </motion.div>
       </div>
     </div>

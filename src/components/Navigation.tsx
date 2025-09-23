@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Heart, Home, Store, BarChart3, LogOut, User } from 'lucide-react';
+import { Heart, Home, Store, BarChart3, LogOut, User, Award, Lock, Vote } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from './ui/button';
 import {
@@ -19,6 +19,9 @@ const Navigation = () => {
     { name: 'Home', href: '/', icon: Home },
     { name: 'Marketplace', href: '/marketplace', icon: Store },
     { name: 'Dashboard', href: '/dashboard', icon: BarChart3, requiresAuth: true },
+    { name: 'My Badges', href: '/badges', icon: Award, requiresAuth: true },
+    { name: 'Staking', href: '/staking', icon: Lock, requiresAuth: true },
+    { name: 'Governance', href: '/governance', icon: Vote, requiresAuth: true },
   ];
 
   const isActive = (path: string) => location.pathname === path;

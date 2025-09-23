@@ -11,6 +11,9 @@ import Marketplace from "./pages/Marketplace";
 import EventDetail from "./pages/EventDetail";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
+import Badges from "./pages/Badges";
+import Staking from "./pages/Staking";  
+import Governance from "./pages/Governance";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -40,6 +43,30 @@ const AppContent = () => {
             element={
               <ProtectedRoute requireAuth redirectTo="/login">
                 <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/badges" 
+            element={
+              <ProtectedRoute requireAuth redirectTo="/login">
+                <Badges />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/staking" 
+            element={
+              <ProtectedRoute requireAuth redirectTo="/login">
+                <Staking />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/governance" 
+            element={
+              <ProtectedRoute requireAuth redirectTo="/login">
+                <Governance />
               </ProtectedRoute>
             } 
           />
