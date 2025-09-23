@@ -181,6 +181,73 @@
     backdrop-filter: blur(8px) saturate(150%);
     background: hsl(var(--background) / 0.85);
   }
+  
+  /* Spotlight Navigation Styles */
+  .spotlight-nav {
+    background: color-mix(in hsl, hsl(var(--card)), transparent 20%);
+    backdrop-filter: blur(12px);
+    border: 1px solid color-mix(in hsl, hsl(var(--border)), transparent 50%);
+  }
+
+  .spotlight-nav::before,
+  .spotlight-nav::after,
+  .spotlight-nav ul.lit {
+    filter: url('#spotlight');
+  }
+
+  .spotlight-nav ul.content::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 100px;
+    pointer-events: none;
+    border: 1px solid white;
+    filter: url('#ambience') brightness(2);
+  }
+
+  .spotlight-nav ul.lit {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+  }
+
+  .spotlight-nav [data-active='true'] {
+    opacity: 0.9;
+    color: hsl(var(--primary));
+  }
+
+  .spotlight-nav::after {
+    background: color-mix(in hsl, hsl(var(--card)), hsl(var(--foreground)) 10%);
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px solid color-mix(in hsl, hsl(var(--foreground)), transparent 90%);
+    z-index: -1;
+    border-radius: 100px;
+    opacity: 0.15;
+  }
+
+  .spotlight-nav::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px solid color-mix(in hsl, hsl(var(--foreground)), transparent 90%);
+    z-index: 2;
+    border-radius: 100px;
+  }
+
+  /* Screen reader only utility */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
 }
 
 /* Keyframe Animations */

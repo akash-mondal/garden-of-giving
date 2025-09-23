@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, Wallet, User, LogOut, Home, Grid3X3, BarChart3 } from 'lucide-react';
+import { gsap } from 'gsap';
 import { useWallet } from '../contexts/WalletContext';
 import { formatAPT } from '../mockData';
 
@@ -9,6 +10,9 @@ const Header = () => {
   const { isConnected, isConnecting, currentUser, connect, disconnect } = useWallet();
   const [showDropdown, setShowDropdown] = useState(false);
   const location = useLocation();
+  const navRef = useRef<HTMLElement>(null);
+  const spotlightPointLightRef = useRef<SVGFEPointLightElement>(null);
+  const linksRef = useRef<HTMLAnchorElement[]>([]);
 
   const navigation = [
     { name: 'Home', href: '/', icon: Home },
@@ -27,47 +31,194 @@ const Header = () => {
     }
   };
 
-  return (
-    <motion.header
-      initial={{ y: -100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      className="sticky top-0 z-50 backdrop-garden border-b border-border/20"
-    >
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-3 group">
-            <div className="relative">
-              <span className="text-4xl">❤️</span>
-              <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl scale-150 group-hover:scale-200 transition-transform duration-500" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-shadows text-primary">CharityRewards</h1>
-              <p className="text-xs text-muted-foreground -mt-1">Digital Garden of Giving</p>
-            </div>
-          </Link>
+  const selectAnchor = (anchor: HTMLAnchorElement) => {
+    if (!navRef.current || !spotlightPointLightRef.current) return;
+    
+    const navBounds = navRef.current.getBoundingClientRect();
+    const anchorBounds = anchor.getBoundingClientRect();
+    
+    // Update active states
+    linksRef.current.forEach(link => {
+      if (link) {
+        link.dataset.active = (anchor === link).toString();
+      }
+    });
+    
+    // Animate spotlight to new position
+    gsap.to(spotlightPointLightRef.current, {
+      duration: 0.25,
+      attr: {
+        x: anchorBounds.left - navBounds.left + anchorBounds.width * 0.5,
+      },
+    });
+  };
 
-          {/* Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            {navigation.map(({ name, href, icon: Icon, requiresAuth }) => {
-              if (requiresAuth && !isConnected) return null;
-              
-              return (
-                <Link
-                  key={name}
-                  to={href}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-300 ${
-                    isActivePath(href)
-                      ? 'bg-primary text-primary-foreground shadow-[0_0_20px_hsl(var(--vibrant-rose)/0.4)]'
-                      : 'text-foreground hover:text-primary hover:bg-primary/10'
-                  }`}
+  useEffect(() => {
+    // Set initial active state based on current route
+    const activeLink = linksRef.current.find(link => {
+      if (!link) return false;
+      const href = link.getAttribute('href');
+      return href && isActivePath(href);
+    });
+    
+    if (activeLink) {
+      selectAnchor(activeLink);
+    }
+  }, [location.pathname]);
+
+  return (
+    <>
+      {/* SVG Filters for Spotlight Effect */}
+      <svg className="sr-only">
+        <filter id="spotlight">
+          <feGaussianBlur
+            in="SourceAlpha"
+            stdDeviation="0.8"
+            result="blur"
+          />
+          <feSpecularLighting
+            result="lighting"
+            in="blur"
+            surfaceScale="0.5"
+            specularConstant="6"
+            specularExponent="65"
+            lightingColor="hsla(234, 14%, 72%, 0.25)"
+          >
+            <fePointLight ref={spotlightPointLightRef} x="50" y="54" z="82" />
+          </feSpecularLighting>
+          <feComposite
+            in="lighting"
+            in2="SourceAlpha"
+            operator="in"
+            result="composite"
+          />
+          <feComposite
+            in="merged"
+            in2="composite"
+            operator="arithmetic"
+            k1="0"
+            k2="1"
+            k3="1"
+            k4="0"
+            result="litPaint"
+          />
+        </filter>
+        <filter id="ambience">
+          <feGaussianBlur
+            in="SourceAlpha"
+            stdDeviation="0.8"
+            result="blur"
+          />
+          <feSpecularLighting
+            result="lighting"
+            in="blur"
+            surfaceScale="0.5"
+            specularConstant="25"
+            specularExponent="65"
+            lightingColor="hsla(234, 14%, 72%, 0.25)"
+          >
+            <fePointLight x="120" y="-154" z="160" />
+          </feSpecularLighting>
+          <feComposite
+            in="lighting"
+            in2="SourceAlpha"
+            operator="in"
+            result="composite"
+          />
+          <feComposite
+            in="merged"
+            in2="composite"
+            operator="arithmetic"
+            k1="0"
+            k2="1"
+            k3="1"
+            k4="0"
+            result="litPaint"
+          />
+        </filter>
+      </svg>
+
+      <motion.header
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="sticky top-0 z-50 backdrop-garden border-b border-border/20"
+      >
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            {/* Logo with Diamond */}
+            <Link to="/" className="flex items-center space-x-3 group">
+              <div className="relative diamond-logo">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 -960 960 960"
+                  fill="currentColor"
+                  className="w-8 h-8 text-primary"
                 >
-                  <Icon className="w-4 h-4" />
-                  <span className="font-nunito font-medium">{name}</span>
-                </Link>
-              );
-            })}
-          </nav>
+                  <path d="M480-120 80-600l120-240h560l120 240-400 480Zm-95-520h190l-60-120h-70l-60 120Zm55 347v-267H218l222 267Zm80 0 222-267H520v267Zm144-347h106l-60-120H604l60 120Zm-474 0h106l60-120H250l-60 120Z" />
+                </svg>
+                <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl scale-150 group-hover:scale-200 transition-transform duration-500" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-shadows text-primary">CharityRewards</h1>
+                <p className="text-xs text-muted-foreground -mt-1">Digital Garden of Giving</p>
+              </div>
+            </Link>
+
+            {/* Spotlight Navigation */}
+            <nav 
+              ref={navRef}
+              className="hidden md:block spotlight-nav relative h-11 rounded-full border border-border/25"
+              onClick={(e) => {
+                if (e.target instanceof HTMLAnchorElement) {
+                  selectAnchor(e.target);
+                }
+              }}
+            >
+              {/* Lit overlay for spotlight effect */}
+              <ul 
+                aria-hidden="true" 
+                className="lit absolute inset-0 z-10 flex items-center list-none m-0 p-0 text-sm pointer-events-none rounded-full"
+                style={{ filter: 'url(#spotlight)' }}
+              >
+                {navigation.map(({ name, requiresAuth }) => {
+                  if (requiresAuth && !isConnected) return null;
+                  return (
+                    <li key={name} className="px-5 py-2 h-full flex items-center">
+                      {name}
+                    </li>
+                  );
+                })}
+              </ul>
+              
+              {/* Actual navigation content */}
+              <ul className="content relative flex items-center list-none m-0 p-0 h-full text-sm rounded-full">
+                {navigation.map(({ name, href, icon: Icon, requiresAuth }, index) => {
+                  if (requiresAuth && !isConnected) return null;
+                  
+                  return (
+                    <li key={name} className="h-full flex items-center">
+                      <Link
+                        ref={el => {
+                          if (el) linksRef.current[index] = el;
+                        }}
+                        to={href}
+                        data-active={isActivePath(href)}
+                        className="flex items-center space-x-2 px-5 py-2 h-full text-foreground/60 hover:text-foreground transition-all duration-300 no-underline"
+                      >
+                        <Icon className="w-4 h-4" />
+                        <span className="font-nunito font-medium pointer-events-none">{name}</span>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+              
+              {/* Ambience border effect */}
+              <div 
+                className="absolute inset-0 rounded-full pointer-events-none border border-white/20" 
+                style={{ filter: 'url(#ambience) brightness(2)' }}
+              />
+            </nav>
 
           {/* Wallet Connection */}
           <div className="flex items-center space-x-4">
@@ -171,9 +322,10 @@ const Header = () => {
               </div>
             )}
           </div>
+          </div>
         </div>
-      </div>
-    </motion.header>
+      </motion.header>
+    </>
   );
 };
 
