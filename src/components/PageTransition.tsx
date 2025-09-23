@@ -13,77 +13,12 @@ const PageTransition: React.FC<PageTransitionProps> = ({ isTransitioning, onTran
   const isOpenedRef = useRef(false);
   const allPointsRef = useRef<number[][]>([]);
   const pointsDelayRef = useRef<number[]>([]);
+  const isInitializedRef = useRef(false);
   
   const numPoints = 10;
   const numPaths = 3;
   const delayPointsMax = 0.3;
   const delayPerPath = 0.25;
-
-  useEffect(() => {
-    // Initialize points
-    allPointsRef.current = [];
-    for (let i = 0; i < numPaths; i++) {
-      let points = [];
-      allPointsRef.current.push(points);
-      for (let j = 0; j < numPoints; j++) {
-        points.push(100);
-      }
-    }
-
-    // Initialize timeline
-    tlRef.current = gsap.timeline({ 
-      onUpdate: render,
-      onComplete: () => {
-        if (isOpenedRef.current) {
-          // After transition is complete, close it
-          setTimeout(() => {
-            toggle();
-          }, 100);
-        } else {
-          onTransitionComplete();
-        }
-      },
-      defaults: {
-        ease: "power2.inOut",
-        duration: 0.9
-      }
-    });
-
-    return () => {
-      if (tlRef.current) {
-        tlRef.current.kill();
-      }
-    };
-  }, [onTransitionComplete]);
-
-  useEffect(() => {
-    if (isTransitioning && !tlRef.current?.isActive()) {
-      isOpenedRef.current = !isOpenedRef.current;
-      toggle();
-    }
-  }, [isTransitioning]);
-
-  const toggle = () => {
-    if (!tlRef.current) return;
-    
-    tlRef.current.progress(0).clear();
-    
-    for (let i = 0; i < numPoints; i++) {
-      pointsDelayRef.current[i] = Math.random() * delayPointsMax;
-    }
-    
-    for (let i = 0; i < numPaths; i++) {
-      let points = allPointsRef.current[i];
-      let pathDelay = delayPerPath * (isOpenedRef.current ? i : (numPaths - i - 1));
-          
-      for (let j = 0; j < numPoints; j++) {      
-        let delay = pointsDelayRef.current[j];      
-        tlRef.current!.to(points, {
-          [j]: 0
-        }, delay + pathDelay);
-      }
-    }
-  };
 
   const render = () => {
     for (let i = 0; i < numPaths; i++) {
@@ -105,6 +40,85 @@ const PageTransition: React.FC<PageTransitionProps> = ({ isTransitioning, onTran
       path.setAttribute("d", d);
     }  
   };
+
+  const toggle = () => {
+    if (!tlRef.current) return;
+    
+    console.log('Toggle called, isOpened:', isOpenedRef.current);
+    tlRef.current.progress(0).clear();
+    
+    for (let i = 0; i < numPoints; i++) {
+      pointsDelayRef.current[i] = Math.random() * delayPointsMax;
+    }
+    
+    for (let i = 0; i < numPaths; i++) {
+      let points = allPointsRef.current[i];
+      let pathDelay = delayPerPath * (isOpenedRef.current ? i : (numPaths - i - 1));
+          
+      for (let j = 0; j < numPoints; j++) {      
+        let delay = pointsDelayRef.current[j];      
+        tlRef.current!.to(points, {
+          [j]: 0
+        }, delay + pathDelay);
+      }
+    }
+  };
+
+  useEffect(() => {
+    // Initialize points
+    allPointsRef.current = [];
+    for (let i = 0; i < numPaths; i++) {
+      let points = [];
+      allPointsRef.current.push(points);
+      for (let j = 0; j < numPoints; j++) {
+        points.push(100);
+      }
+    }
+
+    // Initialize points delay array
+    pointsDelayRef.current = new Array(numPoints).fill(0);
+
+    // Initialize timeline
+    tlRef.current = gsap.timeline({ 
+      onUpdate: render,
+      onComplete: () => {
+        console.log('Timeline complete, isOpened:', isOpenedRef.current);
+        if (isOpenedRef.current) {
+          // After opening transition is complete, close it
+          setTimeout(() => {
+            isOpenedRef.current = false;
+            toggle();
+          }, 100);
+        } else {
+          onTransitionComplete();
+        }
+      },
+      defaults: {
+        ease: "power2.inOut",
+        duration: 0.9
+      }
+    });
+
+    // Initial render
+    setTimeout(() => {
+      render();
+      isInitializedRef.current = true;
+    }, 10);
+
+    return () => {
+      if (tlRef.current) {
+        tlRef.current.kill();
+      }
+    };
+  }, [onTransitionComplete]);
+
+  useEffect(() => {
+    if (isTransitioning && isInitializedRef.current && !tlRef.current?.isActive()) {
+      console.log('Starting page transition animation');
+      isOpenedRef.current = true;
+      toggle();
+    }
+  }, [isTransitioning]);
 
   return (
     <svg 

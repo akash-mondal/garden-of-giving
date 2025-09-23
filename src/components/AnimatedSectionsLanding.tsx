@@ -1,10 +1,8 @@
 import { useEffect, useRef, useCallback } from 'react';
-import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { Observer } from 'gsap/Observer';
 import { Heart, ArrowRight, Globe, Users } from 'lucide-react';
 import { useWallet } from '../contexts/WalletContext';
-import { useTransition } from '../contexts/TransitionContext';
 import { Button } from './ui/button';
 
 // Import high-quality images
@@ -17,9 +15,12 @@ import charityHero5 from '../assets/charity-hero-5.jpg';
 // Register GSAP plugins
 gsap.registerPlugin(Observer);
 
-const AnimatedSectionsLanding = () => {
+interface AnimatedSectionsLandingProps {
+  navigateWithTransition: (to: string) => void;
+}
+
+const AnimatedSectionsLanding: React.FC<AnimatedSectionsLandingProps> = ({ navigateWithTransition }) => {
   const { connect, isConnected } = useWallet();
-  const { navigateWithTransition } = useTransition();
   const containerRef = useRef<HTMLDivElement>(null);
   const currentIndexRef = useRef(-1);
   const animatingRef = useRef(false);
@@ -117,7 +118,10 @@ const AnimatedSectionsLanding = () => {
         variant="premium" 
         size="lg"
         className="mt-8"
-        onClick={() => navigateWithTransition('/login')}
+        onClick={() => {
+          console.log('Login button clicked, navigating to /login');
+          navigateWithTransition('/login');
+        }}
       >
         <Heart className="w-5 h-5 mr-2" />
         Login

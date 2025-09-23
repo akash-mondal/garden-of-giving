@@ -7,14 +7,21 @@ export const usePageTransition = () => {
   const navigate = useNavigate();
 
   const navigateWithTransition = useCallback((to: string) => {
-    if (isTransitioning) return;
+    console.log('navigateWithTransition called with:', to);
+    if (isTransitioning) {
+      console.log('Transition already in progress, ignoring');
+      return;
+    }
     
+    console.log('Starting transition to:', to);
     setIsTransitioning(true);
     setPendingNavigation(to);
   }, [isTransitioning]);
 
   const onTransitionComplete = useCallback(() => {
+    console.log('onTransitionComplete called, pending:', pendingNavigation);
     if (pendingNavigation) {
+      console.log('Navigating to:', pendingNavigation);
       navigate(pendingNavigation);
       setPendingNavigation(null);
     }
