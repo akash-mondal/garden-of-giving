@@ -13,6 +13,11 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        'nunito': ['Nunito', 'sans-serif'],
+        'caveat': ['Caveat', 'cursive'],
+        'shadows': ['Shadows Into Light', 'cursive'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

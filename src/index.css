@@ -2,95 +2,80 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* CharityRewards: The Digital Garden of Giving Design System */
+/* All colors, gradients, fonts, and animations defined here */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
+    /* Core Color Palette - Soft Pink Garden Theme */
+    --petal-pink: 330 100% 98%;
+    --blush-cream: 38 100% 98%;
+    --rose-dark: 320 32% 27%;
+    --vibrant-rose: 330 100% 71%;
+    --rose-light: 350 88% 87%;
+    --mint-soft: 168 40% 92%;
+    
+    /* Shadcn Token Mapping */
+    --background: var(--petal-pink);
+    --foreground: var(--rose-dark);
+    --card: var(--blush-cream);
+    --card-foreground: var(--rose-dark);
+    --popover: var(--blush-cream);
+    --popover-foreground: var(--rose-dark);
+    --primary: var(--vibrant-rose);
+    --primary-foreground: 0 0% 100%;
+    --secondary: var(--rose-light);
+    --secondary-foreground: var(--rose-dark);
+    --muted: var(--rose-light);
+    --muted-foreground: 320 20% 55%;
+    --accent: var(--vibrant-rose);
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 98%;
+    --border: var(--rose-light);
+    --input: var(--rose-light);
+    --ring: var(--vibrant-rose);
+    --radius: 1rem;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Custom Garden Design Tokens */
+    --garden-glow: 330 100% 71%;
+    --garden-shimmer: 350 88% 87%;
+    --garden-success: var(--mint-soft);
+    --garden-text-accent: 320 45% 45%;
+    
+    /* Gradients */
+    --gradient-garden: linear-gradient(135deg, hsl(var(--petal-pink)), hsl(var(--blush-cream)));
+    --gradient-rose: linear-gradient(135deg, hsl(var(--vibrant-rose)), hsl(330 100% 80%));
+    --gradient-glow: radial-gradient(circle, hsl(var(--vibrant-rose) / 0.3), transparent);
+    
+    /* Shadows */
+    --shadow-garden: 0 20px 60px -20px hsl(var(--rose-light) / 0.5);
+    --shadow-glow: 0 0 20px hsl(var(--vibrant-rose) / 0.4);
+    --shadow-soft: 0 8px 32px hsl(var(--rose-light) / 0.3);
+    
+    /* Animations */
+    --transition-garden: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-glow: all 0.3s ease-out;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --background: 320 20% 8%;
+    --foreground: 330 100% 95%;
+    --card: 320 18% 12%;
+    --card-foreground: 330 100% 95%;
+    --popover: 320 18% 12%;
+    --popover-foreground: 330 100% 95%;
+    --primary: var(--vibrant-rose);
+    --primary-foreground: 0 0% 100%;
+    --secondary: 320 15% 20%;
+    --secondary-foreground: 330 100% 90%;
+    --muted: 320 15% 20%;
+    --muted-foreground: 320 20% 65%;
+    --accent: var(--vibrant-rose);
+    --accent-foreground: 0 0% 100%;
+    --border: 320 15% 20%;
+    --input: 320 15% 20%;
+    --ring: var(--vibrant-rose);
   }
 }
 
@@ -100,6 +85,159 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-nunito;
+    background: linear-gradient(135deg, hsl(var(--petal-pink)), hsl(var(--blush-cream)));
+    min-height: 100vh;
+  }
+  
+  /* Typography Scale */
+  h1 {
+    @apply font-shadows text-5xl md:text-6xl lg:text-7xl font-normal;
+  }
+  
+  h2 {
+    @apply font-shadows text-3xl md:text-4xl lg:text-5xl font-normal;
+  }
+  
+  h3 {
+    @apply font-nunito text-2xl md:text-3xl font-bold;
+  }
+  
+  h4 {
+    @apply font-nunito text-xl md:text-2xl font-semibold;
+  }
+  
+  p {
+    @apply font-nunito text-base md:text-lg font-normal leading-relaxed;
+  }
+}
+
+@layer components {
+  /* Garden Button System */
+  .btn-garden-primary {
+    @apply bg-primary text-primary-foreground px-8 py-4 rounded-full font-nunito font-semibold text-lg;
+    @apply hover:shadow-[0_0_20px_hsl(var(--vibrant-rose)/0.7)] transition-all duration-300;
+    @apply active:scale-95 transform;
+  }
+  
+  .btn-garden-secondary {
+    @apply border-2 border-primary text-primary px-8 py-4 rounded-full;
+    @apply font-nunito font-semibold text-lg bg-background;
+    @apply hover:bg-primary hover:text-primary-foreground transition-all duration-300;
+  }
+  
+  /* Garden Card System */
+  .card-garden {
+    @apply bg-card rounded-3xl shadow-[var(--shadow-garden)] border border-border/50;
+    @apply backdrop-blur-sm transition-all duration-500;
+    @apply hover:shadow-[var(--shadow-glow)] hover:scale-[1.02];
+  }
+  
+  /* Garden Progress Bar */
+  .progress-vine {
+    @apply relative overflow-hidden rounded-full bg-secondary h-3;
+  }
+  
+  .progress-vine-fill {
+    @apply h-full bg-gradient-to-r from-primary to-primary/80 rounded-full;
+    @apply relative overflow-hidden;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .progress-vine-fill::after {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent;
+    animation: shimmer 2s infinite;
+    transform: translateX(-100%);
+  }
+  
+  /* Garden Animations */
+  .float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  .glow-pulse {
+    animation: glow-pulse 3s ease-in-out infinite;
+  }
+  
+  .bloom {
+    animation: bloom 1s ease-out forwards;
+  }
+  
+  /* Text Effects */
+  .text-garden-glow {
+    @apply text-primary;
+    text-shadow: 0 0 10px hsl(var(--vibrant-rose) / 0.5);
+  }
+  
+  .text-handwritten {
+    @apply font-caveat text-xl font-semibold;
+  }
+}
+
+@layer utilities {
+  /* Backdrop Effects */
+  .backdrop-garden {
+    backdrop-filter: blur(8px) saturate(150%);
+    background: hsl(var(--background) / 0.85);
+  }
+}
+
+/* Keyframe Animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px hsl(var(--vibrant-rose) / 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px hsl(var(--vibrant-rose) / 0.6);
+  }
+}
+
+@keyframes bloom {
+  0% {
+    transform: scale(0.5) rotate(-10deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1) rotate(5deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Scroll animations will be handled by framer-motion */
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
