@@ -3,7 +3,7 @@ import { Heart, Trophy, TrendingUp, Calendar } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
 import GardenParticles from '../components/GardenParticles';
-import Rose3D from '../components/Rose3D';
+import AnimatedFlowers from '../components/AnimatedFlowers';
 import { formatAPT } from '../mockData';
 
 const Dashboard = () => {
@@ -56,7 +56,7 @@ const Dashboard = () => {
         >
           <div className="text-center space-y-3 md:space-y-4">
             <div className="h-32 md:h-40 lg:h-48 mb-3 md:mb-4 mx-auto">
-              <Rose3D className="w-full h-full" />
+              <AnimatedFlowers className="w-full h-full" />
             </div>
             <p className="text-base md:text-lg font-caveat text-primary px-4">
               Your personal garden grows with every donation
