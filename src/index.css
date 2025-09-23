@@ -353,3 +353,66 @@
     transform: translateY(0);
   }
 }
+
+/* ============= ANIMATED SECTIONS STYLES ============= */
+
+/* Animated sections specific styling */
+.animated-section {
+  height: 100vh;
+  width: 100vw;
+  top: 0;
+  position: fixed;
+  visibility: hidden;
+}
+
+.animated-section .outer,
+.animated-section .inner {
+  width: 100%;
+  height: 100%;
+  overflow-y: hidden;
+}
+
+.animated-section .bg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.animated-section .section-heading {
+  z-index: 999;
+  will-change: transform;
+  text-shadow: 0 0 30px rgba(255, 105, 180, 0.5), 0 0 60px rgba(255, 105, 180, 0.3);
+}
+
+/* Header styling for animated sections */
+header.animated-sections-header {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5%;
+  width: 100%;
+  z-index: 50;
+  height: 7rem;
+  font-size: clamp(0.66rem, 2vw, 1rem);
+  letter-spacing: 0.5em;
+}
+
+/* Mobile responsiveness for sections */
+@media (max-width: 768px) {
+  .animated-section .section-heading {
+    font-size: clamp(2rem, 10vw, 4rem) !important;
+  }
+  
+  header.animated-sections-header {
+    height: 5rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+  }
+}

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { Observer } from 'gsap/Observer';
@@ -6,12 +6,12 @@ import { Heart, ArrowRight, Globe, Users } from 'lucide-react';
 import { useWallet } from '../contexts/WalletContext';
 import { Button } from './ui/button';
 
-// Import images
-import charity1 from '../assets/charity-1.jpg';
-import charity2 from '../assets/charity-2.jpg';
-import charity3 from '../assets/charity-3.jpg';
-import charity4 from '../assets/charity-4.jpg';
-import charity5 from '../assets/charity-5.jpg';
+// Import high-quality images
+import charityHero1 from '../assets/charity-hero-1.jpg';
+import charityHero2 from '../assets/charity-hero-2.jpg';
+import charityHero3 from '../assets/charity-hero-3.jpg';
+import charityHero4 from '../assets/charity-hero-4.jpg';
+import charityHero5 from '../assets/charity-hero-5.jpg';
 
 // Register GSAP plugins
 gsap.registerPlugin(Observer);
@@ -19,193 +19,236 @@ gsap.registerPlugin(Observer);
 const AnimatedSectionsLanding = () => {
   const { connect, isConnected } = useWallet();
   const containerRef = useRef<HTMLDivElement>(null);
-  const sectionsRef = useRef<HTMLElement[]>([]);
-  const outerWrappersRef = useRef<HTMLDivElement[]>([]);
-  const innerWrappersRef = useRef<HTMLDivElement[]>([]);
-  const imagesRef = useRef<HTMLDivElement[]>([]);
-  const headingsRef = useRef<HTMLHeadingElement[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(-1);
-  const [animating, setAnimating] = useState(false);
+  const currentIndexRef = useRef(-1);
+  const animatingRef = useRef(false);
+  const observerRef = useRef<any>(null);
 
   const sections = [
     {
       title: "Transform Lives Through Giving",
-      subtitle: "Start your journey",
-      image: charity1,
-      action: (
-        <div className="flex gap-4 mt-8">
+      subtitle: "Start your journey of compassionate impact",
+      image: charityHero1,
+      id: "first"
+    },
+    {
+      title: "Blockchain-Powered Transparency", 
+      subtitle: "Every donation tracked on the blockchain",
+      image: charityHero2,
+      id: "second"
+    },
+    {
+      title: "Earn Rewards for Kindness",
+      subtitle: "HEART tokens and unique NFT badges",
+      image: charityHero3,
+      id: "third"
+    },
+    {
+      title: "Join the Community",
+      subtitle: "Connect with like-minded givers worldwide",
+      image: charityHero4,
+      id: "fourth"
+    },
+    {
+      title: "Ready to Make a Difference?",
+      subtitle: "Start your giving journey today",
+      image: charityHero5,
+      id: "fifth"
+    }
+  ];
+
+  const wrap = useCallback((index: number) => {
+    const length = sections.length;
+    return ((index % length) + length) % length;
+  }, [sections.length]);
+
+  const gotoSection = useCallback((index: number, direction: number) => {
+    if (animatingRef.current) return;
+    
+    index = wrap(index);
+    animatingRef.current = true;
+    
+    const fromTop = direction === -1;
+    const dFactor = fromTop ? -1 : 1;
+    
+    const sectionsElements = gsap.utils.toArray(".animated-section") as Element[];
+    const outerWrappers = gsap.utils.toArray(".outer") as Element[];
+    const innerWrappers = gsap.utils.toArray(".inner") as Element[];
+    const images = gsap.utils.toArray(".bg") as Element[];
+    const headings = gsap.utils.toArray(".section-heading") as Element[];
+
+    const tl = gsap.timeline({
+      defaults: { duration: 1.25, ease: "power1.inOut" },
+      onComplete: () => {
+        animatingRef.current = false;
+      }
+    });
+
+    if (currentIndexRef.current >= 0) {
+      gsap.set(sectionsElements[currentIndexRef.current], { zIndex: 0 });
+      tl.to(images[currentIndexRef.current], { yPercent: -15 * dFactor })
+        .set(sectionsElements[currentIndexRef.current], { autoAlpha: 0 });
+    }
+
+    gsap.set(sectionsElements[index], { autoAlpha: 1, zIndex: 1 });
+    tl.fromTo([outerWrappers[index], innerWrappers[index]], { 
+        yPercent: (i: number) => i ? -100 * dFactor : 100 * dFactor
+      }, { 
+        yPercent: 0 
+      }, 0)
+      .fromTo(images[index], { yPercent: 15 * dFactor }, { yPercent: 0 }, 0)
+      .fromTo(headings[index], { 
+          autoAlpha: 0, 
+          yPercent: 150 * dFactor
+      }, {
+          autoAlpha: 1,
+          yPercent: 0,
+          duration: 1,
+          ease: "power2"
+        }, 0.2);
+
+    currentIndexRef.current = index;
+  }, [wrap]);
+
+  const getActionButtons = (index: number) => {
+    switch(index) {
+      case 0:
+        return (
           <Button 
             variant="premium" 
             size="lg"
-            onClick={() => !animating && gotoSection(1, 1)}
+            onClick={() => !animatingRef.current && gotoSection(1, 1)}
+            className="mt-8"
           >
             <Heart className="w-5 h-5 mr-2" />
             Discover Impact
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
-        </div>
-      )
-    },
-    {
-      title: "Blockchain-Powered Transparency",
-      subtitle: "Every donation tracked",
-      image: charity2,
-      action: (
-        <div className="flex gap-4 mt-8">
+        );
+      case 1:
+        return (
           <Button 
             variant="glass" 
             size="lg"
-            onClick={() => !animating && gotoSection(2, 1)}
+            onClick={() => !animatingRef.current && gotoSection(2, 1)}
+            className="mt-8"
           >
             <Globe className="w-5 h-5 mr-2" />
             See Transparency
           </Button>
-        </div>
-      )
-    },
-    {
-      title: "Earn Rewards for Kindness",
-      subtitle: "HEART tokens & NFT badges",
-      image: charity3,
-      action: (
-        <div className="flex gap-4 mt-8">
+        );
+      case 2:
+        return (
           <Button 
             variant="premium" 
             size="lg"
-            onClick={() => !animating && gotoSection(3, 1)}
+            onClick={() => !animatingRef.current && gotoSection(3, 1)}
+            className="mt-8"
           >
             Learn Rewards System
           </Button>
-        </div>
-      )
-    },
-    {
-      title: "Join the Community",
-      subtitle: "Connect with like-minded givers",
-      image: charity4,
-      action: (
-        <div className="flex gap-4 mt-8">
+        );
+      case 3:
+        return (
           <Button 
             variant="glass" 
             size="lg"
-            onClick={() => !animating && gotoSection(4, 1)}
+            onClick={() => !animatingRef.current && gotoSection(4, 1)}
+            className="mt-8"
           >
             <Users className="w-5 h-5 mr-2" />
             Explore Community
           </Button>
-        </div>
-      )
-    },
-    {
-      title: "Ready to Make a Difference?",
-      subtitle: "Start your giving journey today",
-      image: charity5,
-      action: (
-        <div className="flex flex-col sm:flex-row gap-4 mt-8">
-          {!isConnected ? (
-            <Button 
-              variant="premium" 
-              size="lg"
-              onClick={connect}
-            >
-              <Heart className="w-5 h-5 mr-2" />
-              Connect Wallet
-            </Button>
-          ) : (
-            <Link to="/marketplace">
-              <Button variant="premium" size="lg">
-                <Globe className="w-5 h-5 mr-2" />
-                Enter Marketplace
+        );
+      case 4:
+        return (
+          <div className="flex flex-col sm:flex-row gap-4 mt-8">
+            {!isConnected ? (
+              <Button 
+                variant="premium" 
+                size="lg"
+                onClick={connect}
+              >
+                <Heart className="w-5 h-5 mr-2" />
+                Connect Wallet
+              </Button>
+            ) : (
+              <Link to="/marketplace">
+                <Button variant="premium" size="lg">
+                  <Globe className="w-5 h-5 mr-2" />
+                  Enter Marketplace
+                </Button>
+              </Link>
+            )}
+            <Link to="/dashboard">
+              <Button variant="glass" size="lg">
+                View Dashboard
               </Button>
             </Link>
-          )}
-          <Link to="/dashboard">
-            <Button variant="glass" size="lg">
-              View Dashboard
-            </Button>
-          </Link>
-        </div>
-      )
+          </div>
+        );
+      default:
+        return null;
     }
-  ];
-
-  const wrap = (index: number) => {
-    if (index >= sections.length) return 0;
-    if (index < 0) return sections.length - 1;
-    return index;
-  };
-
-  const gotoSection = (index: number, direction: number) => {
-    if (animating) return;
-    
-    index = wrap(index);
-    setAnimating(true);
-    setCurrentIndex(index);
-    
-    const fromTop = direction === -1;
-    const dFactor = fromTop ? -1 : 1;
-    
-    const tl = gsap.timeline({
-      defaults: { duration: 1.25, ease: "power1.inOut" },
-      onComplete: () => setAnimating(false)
-    });
-
-    if (currentIndex >= 0) {
-      gsap.set(sectionsRef.current[currentIndex], { zIndex: 0 });
-      tl.to(imagesRef.current[currentIndex], { yPercent: -15 * dFactor })
-        .set(sectionsRef.current[currentIndex], { autoAlpha: 0 });
-    }
-
-    gsap.set(sectionsRef.current[index], { autoAlpha: 1, zIndex: 1 });
-    tl.fromTo(
-      [outerWrappersRef.current[index], innerWrappersRef.current[index]], 
-      { yPercent: (i: number) => i ? -100 * dFactor : 100 * dFactor }, 
-      { yPercent: 0 }, 
-      0
-    )
-    .fromTo(imagesRef.current[index], { yPercent: 15 * dFactor }, { yPercent: 0 }, 0)
-    .fromTo(
-      headingsRef.current[index], 
-      { autoAlpha: 0, yPercent: 150 * dFactor },
-      {
-        autoAlpha: 1,
-        yPercent: 0,
-        duration: 1,
-        ease: "power2",
-      }, 
-      0.2
-    );
   };
 
   useEffect(() => {
-    // Initialize GSAP
-    gsap.set(outerWrappersRef.current, { yPercent: 100 });
-    gsap.set(innerWrappersRef.current, { yPercent: -100 });
+    console.log('AnimatedSectionsLanding: Initializing GSAP animations');
+    
+    try {
+      // Initialize GSAP
+      const outerWrappers = gsap.utils.toArray(".outer");
+      const innerWrappers = gsap.utils.toArray(".inner");
+      
+      console.log('Found outer wrappers:', outerWrappers.length);
+      console.log('Found inner wrappers:', innerWrappers.length);
+      
+      if (outerWrappers.length > 0 && innerWrappers.length > 0) {
+        gsap.set(outerWrappers, { yPercent: 100 });
+        gsap.set(innerWrappers, { yPercent: -100 });
 
-    // Create Observer
-    const observer = Observer.create({
-      type: "wheel,touch,pointer",
-      wheelSpeed: -1,
-      onDown: () => !animating && gotoSection(currentIndex - 1, -1),
-      onUp: () => !animating && gotoSection(currentIndex + 1, 1),
-      tolerance: 10,
-      preventDefault: true
-    });
+        // Create Observer
+        observerRef.current = Observer.create({
+          type: "wheel,touch,pointer",
+          wheelSpeed: -1,
+          onDown: () => !animatingRef.current && gotoSection(currentIndexRef.current - 1, -1),
+          onUp: () => !animatingRef.current && gotoSection(currentIndexRef.current + 1, 1),
+          tolerance: 10,
+          preventDefault: true
+        });
 
-    // Start with first section
-    setTimeout(() => gotoSection(0, 1), 100);
+        console.log('GSAP Observer created successfully');
 
-    return () => {
-      observer.kill();
-    };
-  }, [currentIndex, animating]);
+        // Start with first section after a small delay
+        const timer = setTimeout(() => {
+          console.log('Starting first section');
+          gotoSection(0, 1);
+        }, 100);
+
+        return () => {
+          if (observerRef.current) {
+            observerRef.current.kill();
+          }
+          clearTimeout(timer);
+        };
+      } else {
+        console.error('Could not find required elements for GSAP animation');
+      }
+    } catch (error) {
+      console.error('Error initializing GSAP animations:', error);
+    }
+  }, [gotoSection]);
 
   return (
-    <div ref={containerRef} className="overflow-hidden">
+    <div ref={containerRef} className="relative">
       {/* Header */}
-      <header className="fixed top-0 w-full z-50 flex items-center justify-between px-[5%] h-28 text-white uppercase tracking-[0.5em] text-sm">
-        <div className="font-shadows">Charity Rewards</div>
-        <Link to="/marketplace" className="text-white/80 hover:text-white transition-colors">
+      <header className="animated-sections-header fixed top-0 w-full z-50 flex items-center justify-between px-[5%] h-28">
+        <div className="text-white font-shadows text-sm tracking-[0.5em] uppercase">
+          Charity Rewards
+        </div>
+        <Link 
+          to="/marketplace" 
+          className="text-white/80 hover:text-white transition-colors text-sm tracking-[0.5em] uppercase"
+        >
           Enter Marketplace
         </Link>
       </header>
@@ -213,39 +256,25 @@ const AnimatedSectionsLanding = () => {
       {/* Sections */}
       {sections.map((section, index) => (
         <section
-          key={index}
-          ref={(el) => { if (el) sectionsRef.current[index] = el; }}
-          className="fixed top-0 w-full h-full invisible"
+          key={section.id}
+          className={`animated-section fixed top-0 w-full h-screen invisible ${section.id}`}
         >
-          <div 
-            ref={(el) => { if (el) outerWrappersRef.current[index] = el; }}
-            className="w-full h-full overflow-hidden"
-          >
-            <div 
-              ref={(el) => { if (el) innerWrappersRef.current[index] = el; }}
-              className="w-full h-full overflow-hidden"
-            >
+          <div className="outer w-full h-full overflow-hidden">
+            <div className="inner w-full h-full overflow-hidden">
               <div
-                ref={(el) => { if (el) imagesRef.current[index] = el; }}
-                className="absolute top-0 w-full h-full bg-cover bg-center flex items-center justify-center"
+                className="bg absolute top-0 w-full h-full bg-cover bg-center flex items-center justify-center"
                 style={{
                   backgroundImage: `linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.1) 100%), url('${section.image}')`,
                 }}
               >
-                <div className="text-center text-white z-50 px-4 max-w-4xl">
-                  <h2
-                    ref={(el) => { if (el) headingsRef.current[index] = el; }}
-                    className="font-shadows text-4xl md:text-6xl lg:text-8xl font-semibold mb-4 leading-tight"
-                    style={{
-                      textShadow: '0 0 30px rgba(255, 105, 180, 0.5)',
-                    }}
-                  >
+                <div className="text-center text-white z-50 px-4 max-w-5xl">
+                  <h2 className="section-heading font-shadows text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-semibold leading-tight mb-6 max-w-4xl mx-auto">
                     {section.title}
                   </h2>
-                  <p className="text-xl md:text-2xl font-caveat mb-8 text-white/90">
+                  <p className="text-xl md:text-2xl lg:text-3xl font-caveat text-white/90 mb-8">
                     {section.subtitle}
                   </p>
-                  {section.action}
+                  {getActionButtons(index)}
                 </div>
               </div>
             </div>
@@ -254,8 +283,8 @@ const AnimatedSectionsLanding = () => {
       ))}
 
       {/* Navigation hint */}
-      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-40 text-white/60 text-sm">
-        Scroll or swipe to explore
+      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-40 text-white/60 text-sm uppercase tracking-wider">
+        Scroll to explore
       </div>
     </div>
   );
