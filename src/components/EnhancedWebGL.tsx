@@ -1,97 +1,35 @@
 import { useRef, useMemo } from 'react';
-import { Canvas, useFrame, extend } from '@react-three/fiber';
-import { shaderMaterial } from '@react-three/drei';
+import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-
-// Custom Shader Material for Wave Effect
-const WaveMaterial = shaderMaterial(
-  {
-    time: 0,
-    colorStart: new THREE.Color('#ff69b4'),
-    colorEnd: new THREE.Color('#9966cc'),
-    mouse: new THREE.Vector2(0, 0),
-  },
-  // Vertex Shader
-  `
-    varying vec2 vUv;
-    varying vec3 vPosition;
-    uniform float time;
-    uniform vec2 mouse;
-    
-    void main() {
-      vUv = uv;
-      vPosition = position;
-      
-      vec3 pos = position;
-      float wave = sin(pos.x * 2.0 + time) * 0.1;
-      wave += sin(pos.y * 3.0 + time * 1.5) * 0.05;
-      wave += sin(distance(pos.xy, mouse) * 5.0 - time * 2.0) * 0.02;
-      
-      pos.z += wave;
-      
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-    }
-  `,
-  // Fragment Shader
-  `
-    varying vec2 vUv;
-    varying vec3 vPosition;
-    uniform float time;
-    uniform vec3 colorStart;
-    uniform vec3 colorEnd;
-    uniform vec2 mouse;
-    
-    void main() {
-      vec2 center = vec2(0.5, 0.5);
-      float dist = distance(vUv, center);
-      float mouseDist = distance(vUv, mouse * 0.5 + 0.5);
-      
-      float pulse = sin(dist * 10.0 - time * 3.0) * 0.5 + 0.5;
-      float mouseEffect = 1.0 - smoothstep(0.0, 0.3, mouseDist);
-      
-      vec3 color = mix(colorStart, colorEnd, dist + pulse * 0.3);
-      color += mouseEffect * vec3(1.0, 0.8, 0.9) * 0.5;
-      
-      float alpha = 1.0 - dist * 1.5;
-      alpha += mouseEffect * 0.3;
-      alpha *= pulse * 0.3 + 0.7;
-      
-      gl_FragColor = vec4(color, alpha * 0.8);
-    }
-  `
-);
-
-extend({ WaveMaterial });
-
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      waveMaterial: any;
-    }
-  }
-}
 
 // Wave Plane Component
 const WavePlane = () => {
   const meshRef = useRef<THREE.Mesh>(null);
-  const materialRef = useRef<any>(null);
 
   useFrame((state, delta) => {
-    if (materialRef.current) {
-      materialRef.current.time += delta;
-      materialRef.current.mouse.x = state.mouse.x;
-      materialRef.current.mouse.y = state.mouse.y;
+    if (meshRef.current) {
+      meshRef.current.rotation.z += delta * 0.1;
+      const positions = meshRef.current.geometry.attributes.position.array as Float32Array;
+      
+      for (let i = 0; i < positions.length; i += 3) {
+        const x = positions[i];
+        const y = positions[i + 1];
+        positions[i + 2] = Math.sin(x * 2 + state.clock.elapsedTime) * 0.2 + 
+                          Math.sin(y * 3 + state.clock.elapsedTime * 1.5) * 0.1;
+      }
+      meshRef.current.geometry.attributes.position.needsUpdate = true;
     }
   });
 
   return (
     <mesh ref={meshRef} position={[0, 0, -2]} rotation={[-Math.PI / 4, 0, 0]}>
-      <planeGeometry args={[10, 10, 64, 64]} />
-      <waveMaterial
-        ref={materialRef}
+      <planeGeometry args={[10, 10, 32, 32]} />
+      <meshPhongMaterial
+        color="#ff69b4"
         transparent
+        opacity={0.3}
         side={THREE.DoubleSide}
-        blending={THREE.AdditiveBlending}
+        wireframe={true}
       />
     </mesh>
   );
@@ -168,7 +106,7 @@ const ParticleSwirl = () => {
       <bufferGeometry>
         <bufferAttribute
           attach="attributes-position"
-          count={count}
+          count={positions.length / 3}
           array={positions}
           itemSize={3}
         />
