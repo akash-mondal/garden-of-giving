@@ -1,16 +1,17 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Heart, ArrowRight, Sparkles, Globe } from 'lucide-react';
 import { useWallet } from '../contexts/WalletContext';
-import GardenParticles from '../components/GardenParticles';
+import WebGLScene from '../components/WebGLScene';
+import EnhancedWebGL from '../components/EnhancedWebGL';
 
 const NewLanding = () => {
   const { connect, isConnected } = useWallet();
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Subtle 3D mouse tracking effect
+    // Subtle 3D mouse tracking effect for text
     const handleMouseMove = (e: MouseEvent) => {
       if (!containerRef.current) return;
       
@@ -21,13 +22,13 @@ const NewLanding = () => {
       const deltaX = (e.clientX - centerX) / rect.width;
       const deltaY = (e.clientY - centerY) / rect.height;
       
-      const rotateY = deltaX * 8;
-      const rotateX = -deltaY * 8;
+      const rotateY = deltaX * 5;
+      const rotateX = -deltaY * 5;
       
       const hero = containerRef.current.querySelector('.hero-3d') as HTMLElement;
       
       if (hero) {
-        hero.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        hero.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px)`;
       }
     };
 
@@ -39,34 +40,58 @@ const NewLanding = () => {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative min-h-screen">
-      <GardenParticles />
+    <div ref={containerRef} className="relative min-h-screen overflow-hidden">
+      {/* Advanced WebGL Background */}
+      <Suspense fallback={<div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 -z-10" />}>
+        <WebGLScene />
+        <EnhancedWebGL />
+      </Suspense>
       
       {/* Hero Section */}
-      <div className="min-h-screen flex items-center justify-center relative">
-        <div className="hero-3d transition-transform duration-100 ease-out transform-gpu">
+      <div className="min-h-screen flex items-center justify-center relative z-10">
+        <div className="hero-3d transition-transform duration-200 ease-out transform-gpu">
           <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
             className="text-center space-y-8 px-4"
           >
             {/* Main Title */}
             <div className="space-y-4">
               <motion.h1
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
+                initial={{ opacity: 0, scale: 0.8, rotateX: 45 }}
+                animate={{ opacity: 1, scale: 1, rotateX: 0 }}
+                transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
                 className="font-shadows text-6xl md:text-8xl lg:text-9xl text-foreground leading-tight"
+                style={{
+                  textShadow: '0 0 30px rgba(255, 105, 180, 0.5), 0 0 60px rgba(255, 105, 180, 0.3)',
+                  background: 'linear-gradient(45deg, #ff69b4, #9966cc, #ff1493)',
+                  backgroundClip: 'text',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  filter: 'drop-shadow(0 4px 8px rgba(255, 105, 180, 0.3))'
+                }}
               >
                 CHARITY
-                <span className="block text-garden-glow">REWARDS</span>
+                <motion.span
+                  className="block"
+                  initial={{ opacity: 0, x: -100 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 1, delay: 0.6 }}
+                >
+                  REWARDS
+                </motion.span>
               </motion.h1>
               
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ 
+                  duration: 0.8, 
+                  delay: 1, 
+                  type: "spring",
+                  stiffness: 100
+                }}
                 className="flex justify-center"
               >
                 <Sparkles className="w-12 h-12 text-primary animate-pulse" />
@@ -75,63 +100,98 @@ const NewLanding = () => {
 
             {/* Subtitle */}
             <motion.p
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
+              initial={{ opacity: 0, y: 30, filter: 'blur(10px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              transition={{ duration: 1, delay: 1.2 }}
               className="text-2xl md:text-3xl font-caveat text-garden-text-accent max-w-3xl mx-auto leading-relaxed"
+              style={{
+                textShadow: '0 2px 10px rgba(0, 0, 0, 0.3)',
+                backdropFilter: 'blur(2px)'
+              }}
             >
               Transform your compassion into digital rewards
               <br />
-              <span className="text-primary">Grow your garden of giving</span>
+              <span className="text-primary glow-text">
+                Grow your garden of giving in the metaverse
+              </span>
             </motion.p>
 
             {/* Call to Action */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.8 }}
+              transition={{ duration: 1, delay: 1.6 }}
               className="flex flex-col sm:flex-row gap-6 justify-center items-center pt-8"
             >
-              <Link 
-                to="/marketplace"
-                className="btn-garden-primary flex items-center space-x-2 group"
+              <motion.div
+                whileHover={{ 
+                  scale: 1.05, 
+                  boxShadow: '0 20px 40px rgba(255, 105, 180, 0.4)',
+                  rotateY: 5
+                }}
+                whileTap={{ scale: 0.95 }}
               >
-                <Globe className="w-5 h-5" />
-                <span>Explore Marketplace</span>
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
+                <Link 
+                  to="/marketplace"
+                  className="btn-garden-primary flex items-center space-x-2 group relative overflow-hidden"
+                  style={{
+                    background: 'linear-gradient(135deg, #ff69b4, #ff1493)',
+                    boxShadow: '0 10px 30px rgba(255, 105, 180, 0.4)'
+                  }}
+                >
+                  <Globe className="w-5 h-5" />
+                  <span>Explore Marketplace</span>
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </motion.div>
               
               {!isConnected && (
-                <button 
-                  onClick={connect}
-                  className="btn-garden-secondary flex items-center space-x-2"
+                <motion.div
+                  whileHover={{ 
+                    scale: 1.05,
+                    rotateY: -5
+                  }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <Heart className="w-5 h-5" />
-                  <span>Connect Wallet</span>
-                </button>
+                  <button 
+                    onClick={connect}
+                    className="btn-garden-secondary flex items-center space-x-2 relative overflow-hidden"
+                    style={{
+                      backdropFilter: 'blur(10px)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      border: '2px solid rgba(255, 105, 180, 0.5)'
+                    }}
+                  >
+                    <Heart className="w-5 h-5" />
+                    <span>Connect Wallet</span>
+                  </button>
+                </motion.div>
               )}
             </motion.div>
           </motion.div>
         </div>
       </div>
 
-      {/* Features Section */}
+      {/* Features Section with 3D Cards */}
       <motion.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
+        transition={{ duration: 1.2 }}
         viewport={{ once: true }}
-        className="py-20 px-4"
+        className="py-20 px-4 relative z-10"
       >
         <div className="container mx-auto">
           <motion.h2
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 1 }}
             viewport={{ once: true }}
             className="text-center text-4xl md:text-5xl font-shadows text-foreground mb-16"
+            style={{
+              textShadow: '0 0 20px rgba(255, 105, 180, 0.3)',
+            }}
           >
-            How It Works
+            Experience the Future of Giving
           </motion.h2>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -154,15 +214,29 @@ const NewLanding = () => {
             ].map(({ icon: Icon, title, description }, index) => (
               <motion.div
                 key={title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.2 }}
+                initial={{ opacity: 0, y: 50, rotateX: 45 }}
+                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+                whileHover={{ 
+                  scale: 1.05, 
+                  rotateY: 5,
+                  boxShadow: '0 25px 50px rgba(255, 105, 180, 0.2)'
+                }}
+                transition={{ duration: 0.8, delay: index * 0.2 }}
                 viewport={{ once: true }}
-                className="card-garden p-8 text-center space-y-4"
+                className="card-garden p-8 text-center space-y-4 relative overflow-hidden"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  backdropFilter: 'blur(15px)',
+                  border: '1px solid rgba(255, 105, 180, 0.2)'
+                }}
               >
-                <div className="w-16 h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
+                <motion.div 
+                  className="w-16 h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center relative"
+                  whileHover={{ rotate: 360 }}
+                  transition={{ duration: 0.6 }}
+                >
                   <Icon className="w-8 h-8 text-primary" />
-                </div>
+                </motion.div>
                 <h3 className="text-xl font-nunito font-bold text-foreground">{title}</h3>
                 <p className="text-muted-foreground font-nunito">{description}</p>
               </motion.div>
