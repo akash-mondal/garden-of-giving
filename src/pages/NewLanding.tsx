@@ -18,6 +18,9 @@ const NewLanding = () => {
   const featuredImageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Check if user has already seen the animation
+    const hasSeenAnimation = localStorage.getItem('hasSeenGardenAnimation');
+    
     // Create custom ease for animations
     const slideEase = "cubic-bezier(0.65,0.05,0.36,1)";
 
@@ -311,123 +314,34 @@ const NewLanding = () => {
       );
     }
 
-    // Initialize custom cursor functionality
+    // Initialize simple cursor (without hover effects)
     function initializeCursor() {
       const cursor = document.getElementById("cursor");
       const cursorPt = document.getElementById("cursorPt");
-      const marketplaceBtn = document.getElementById("marketplace-btn");
-      const dashboardBtn = document.getElementById("dashboard-btn");
 
       if (!cursor || !cursorPt) return;
 
       const CURSOR_WIDTH = 30;
       const CURSOR_PT_WIDTH = 7;
 
-      let isOverTarget = false;
-      let rotationTween: gsap.core.Tween | null = null;
-      let exitTween: gsap.core.Tween | null = null;
-      let enterTween: gsap.core.Tween | null = null;
-
-      // Initial rotation loop using GSAP
-      function startRotation() {
-        gsap.set(cursor, { rotation: 0 });
-        rotationTween = gsap.to(cursor, {
-          rotation: 180,
-          duration: 1.2,
-          repeat: -1,
-          ease: "linear",
-          transformOrigin: "center center"
-        });
-      }
-
-      function stopRotation() {
-        if (rotationTween) rotationTween.kill();
-      }
-
-      // Mouse move handler
+      // Mouse move handler - basic following only
       document.addEventListener("mousemove", (e) => {
-        gsap.to(cursor, { autoAlpha: 1 });
-        gsap.to(cursorPt, { autoAlpha: 1 });
-        
-        if (!isOverTarget) {
-          gsap.to(cursor, {
-            x: e.clientX - CURSOR_WIDTH / 2,
-            y: e.clientY - CURSOR_WIDTH / 2,
-            duration: 0.1,
-            ease: "expo.out"
-          });
-        }
+        gsap.to(cursor, { 
+          autoAlpha: 1,
+          x: e.clientX - CURSOR_WIDTH / 2,
+          y: e.clientY - CURSOR_WIDTH / 2,
+          duration: 0.1,
+          ease: "expo.out"
+        });
         
         gsap.to(cursorPt, {
+          autoAlpha: 1,
           x: e.clientX - CURSOR_PT_WIDTH / 2,
           y: e.clientY - CURSOR_PT_WIDTH / 2,
           duration: 0.1,
           ease: "expo.out"
         });
       });
-
-      // Setup button interactions
-      const buttons = [marketplaceBtn, dashboardBtn];
-      
-      buttons.forEach(button => {
-        if (!button) return;
-
-        button.addEventListener("mouseenter", () => {
-          isOverTarget = true;
-          stopRotation();
-
-          const rect = button.getBoundingClientRect();
-          
-          if (exitTween) exitTween.kill();
-          enterTween = gsap.to(cursor, {
-            width: rect.width,
-            height: rect.height,
-            rotation: 360,
-            duration: 0.2,
-            ease: "easeOut"
-          });
-        });
-
-        // Move within button
-        button.addEventListener("mousemove", (e) => {
-          const rect = button.getBoundingClientRect();
-          const targetWidth = rect.width;
-          const targetHeight = rect.height;
-
-          // center
-          const cx = rect.left + targetWidth / 2;
-          const cy = rect.top + targetHeight / 2;
-
-          // distance from center
-          const dx = e.clientX - cx;
-          const dy = e.clientY - cy;
-
-          gsap.to(cursor, {
-            x: rect.left + dx * 0.09,
-            y: rect.top + dy * 0.09,
-            scale: 1.1,
-            duration: 0.1,
-            ease: "power2.out"
-          });
-        });
-
-        // Leave button
-        button.addEventListener("mouseleave", () => {
-          isOverTarget = false;
-          
-          exitTween = gsap.to(cursor, {
-            width: 30,
-            height: 30,
-            scale: 1,
-            duration: 0.5,
-            ease: "elastic.out(1, .9)"
-          });
-
-          startRotation();
-        });
-      });
-
-      startRotation();
     }
     
     // Initialize menu functionality
@@ -715,25 +629,55 @@ const NewLanding = () => {
       y: "100%"
     });
 
-    // Start terminal preloader animation
-    const terminalAnimation = animateTerminalPreloader();
+    // Skip animation if user has seen it before
+    if (hasSeenAnimation) {
+      // Hide preloader immediately
+      if (preloaderEl) {
+        preloaderEl.style.display = "none";
+      }
+      
+      // Show content immediately
+      if (contentEl) {
+        gsap.set(contentEl, {
+          opacity: 1,
+          visibility: "visible"
+        });
+      }
 
-    // Initialize menu functionality
-    initializeMenu();
-    
-    // Initialize cursor functionality after content is loaded
-    setTimeout(() => {
-      initializeCursor();
-    }, 100);
+      // Show title lines immediately
+      gsap.set(titleLines, {
+        y: "0%"
+      });
 
-    return () => {
-      // Cleanup
-      terminalAnimation.kill();
-    };
+      // Initialize menu and cursor
+      initializeMenu();
+      setTimeout(() => {
+        initializeCursor();
+      }, 100);
+    } else {
+      // First time visitor - show full animation
+      const terminalAnimation = animateTerminalPreloader();
+      
+      // Mark as seen
+      localStorage.setItem('hasSeenGardenAnimation', 'true');
+
+      // Initialize menu functionality
+      initializeMenu();
+      
+      // Initialize cursor functionality after content is loaded
+      setTimeout(() => {
+        initializeCursor();
+      }, 100);
+
+      return () => {
+        // Cleanup
+        terminalAnimation.kill();
+      };
+    }
   }, []);
 
   return (
-    <div className="new-landing" style={{ cursor: 'none' }}>
+    <div className="new-landing">
       <div className="background-image" style={{ backgroundImage: `url(${gardenBackground})` }}></div>
       <div className="quote-section">
         <h2>
@@ -744,21 +688,9 @@ const NewLanding = () => {
         </h2>
       </div>
 
-      <div className="scroll-text">Experience the Garden</div>
-
       {/* Custom Cursor Elements */}
       <div id="cursorPt"></div>
       <div id="cursor"></div>
-
-      {/* Action Buttons */}
-      <div className="action-buttons">
-        <Link to="/marketplace" className="action-button" id="marketplace-btn">
-          Explore Charities
-        </Link>
-        <Link to="/dashboard" className="action-button" id="dashboard-btn">
-          Your Garden
-        </Link>
-      </div>
 
       <div className="preloader" id="preloader" ref={preloaderRef}>
         <div className="terminal-preloader">
