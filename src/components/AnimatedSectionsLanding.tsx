@@ -1,4 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { Observer } from 'gsap/Observer';
 import { Heart, ArrowRight, Globe, Users } from 'lucide-react';
@@ -15,11 +16,7 @@ import charityHero5 from '../assets/charity-hero-5.jpg';
 // Register GSAP plugins
 gsap.registerPlugin(Observer);
 
-interface AnimatedSectionsLandingProps {
-  navigateWithTransition: (to: string) => void;
-}
-
-const AnimatedSectionsLanding: React.FC<AnimatedSectionsLandingProps> = ({ navigateWithTransition }) => {
+const AnimatedSectionsLanding = () => {
   const { connect, isConnected } = useWallet();
   const containerRef = useRef<HTMLDivElement>(null);
   const currentIndexRef = useRef(-1);
@@ -114,19 +111,17 @@ const AnimatedSectionsLanding: React.FC<AnimatedSectionsLandingProps> = ({ navig
 
   const getActionButtons = (index: number) => {
     return (
-      <Button 
-        variant="premium" 
-        size="lg"
-        className="mt-8"
-        onClick={() => {
-          console.log('Login button clicked, navigating to /login');
-          navigateWithTransition('/login');
-        }}
-      >
-        <Heart className="w-5 h-5 mr-2" />
-        Login
-        <ArrowRight className="w-5 h-5 ml-2" />
-      </Button>
+      <Link to="/login">
+        <Button 
+          variant="premium" 
+          size="lg"
+          className="mt-8"
+        >
+          <Heart className="w-5 h-5 mr-2" />
+          Login
+          <ArrowRight className="w-5 h-5 ml-2" />
+        </Button>
+      </Link>
     );
   };
 
@@ -184,12 +179,12 @@ const AnimatedSectionsLanding: React.FC<AnimatedSectionsLandingProps> = ({ navig
         <div className="text-white font-shadows text-sm tracking-[0.5em] uppercase">
           Charity Rewards
         </div>
-        <button 
-          onClick={() => navigateWithTransition('/marketplace')}
-          className="text-white/80 hover:text-white transition-colors text-sm tracking-[0.5em] uppercase bg-transparent border-none cursor-pointer"
+        <Link 
+          to="/marketplace" 
+          className="text-white/80 hover:text-white transition-colors text-sm tracking-[0.5em] uppercase"
         >
           Enter Marketplace
-        </button>
+        </Link>
       </header>
 
       {/* Sections */}

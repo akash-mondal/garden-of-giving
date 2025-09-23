@@ -5,8 +5,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { WalletProvider } from "./contexts/WalletContext";
 import Navigation from "./components/Navigation";
-import PageTransition from "./components/PageTransition";
-import { usePageTransition } from "./hooks/usePageTransition";
 import AnimatedSectionsLanding from './components/AnimatedSectionsLanding';
 import Marketplace from "./pages/Marketplace";
 import EventDetail from "./pages/EventDetail";
@@ -19,18 +17,13 @@ const queryClient = new QueryClient();
 const AppContent = () => {
   const location = useLocation();
   const isLandingPage = location.pathname === '/';
-  const { isTransitioning, navigateWithTransition, onTransitionComplete } = usePageTransition();
 
   return (
     <div className="min-h-screen">
-      <PageTransition 
-        isTransitioning={isTransitioning}
-        onTransitionComplete={onTransitionComplete}
-      />
       {!isLandingPage && <Navigation />}
       <div className={!isLandingPage ? 'pt-16' : ''}>
         <Routes>
-          <Route path="/" element={<AnimatedSectionsLanding navigateWithTransition={navigateWithTransition} />} />
+          <Route path="/" element={<AnimatedSectionsLanding />} />
           <Route path="/login" element={<Login />} />
           <Route path="/marketplace" element={<Marketplace />} />
           <Route path="/event/:eventAddress" element={<EventDetail />} />
