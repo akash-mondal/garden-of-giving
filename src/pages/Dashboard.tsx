@@ -4,7 +4,7 @@ import { Navigate } from 'react-router-dom';
 import { Heart, Trophy, TrendingUp, Vote, Lock, Unlock, Calendar, Award, ExternalLink } from 'lucide-react';
 import { useWallet } from '../contexts/WalletContext';
 import { mockGovernanceProposals, formatAPT } from '../mockData';
-import GardenGrid from '../components/GardenGrid';
+import InteractiveGarden from '../components/InteractiveGarden';
 import GardenParticles from '../components/GardenParticles';
 
 const Dashboard = () => {
@@ -61,15 +61,15 @@ const Dashboard = () => {
           </p>
         </motion.div>
 
-        {/* 3D Garden Visualization */}
+        {/* Interactive Garden Visualization */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
-          className="h-64 md:h-80 mb-8 relative"
+          className="h-64 md:h-80 mb-8 relative flex items-center justify-center"
         >
           <div className="absolute inset-0 bg-gradient-radial from-primary/10 via-transparent to-transparent rounded-3xl" />
-          <GardenGrid 
+          <InteractiveGarden 
             donationCount={currentUser.donationCount} 
             totalDonated={currentUser.totalDonatedAPT}
             className="relative z-10"
