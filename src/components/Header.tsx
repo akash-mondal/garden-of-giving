@@ -5,6 +5,7 @@ import { Heart, Wallet, User, LogOut, Home, Grid3X3, BarChart3 } from 'lucide-re
 import { gsap } from 'gsap';
 import { useWallet } from '../contexts/WalletContext';
 import { formatAPT } from '../mockData';
+import { initExpandingCircles, activateExpandingCircles, deactivateExpandingCircles } from '../utils/menuAnimations';
 
 const Header = () => {
   const { isConnected, isConnecting, currentUser, connect, disconnect } = useWallet();
@@ -13,6 +14,8 @@ const Header = () => {
   const navRef = useRef<HTMLElement>(null);
   const spotlightPointLightRef = useRef<SVGFEPointLightElement>(null);
   const linksRef = useRef<HTMLAnchorElement[]>([]);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const [isMobileMenuActive, setIsMobileMenuActive] = useState(false);
 
   const navigation = [
     { name: 'Home', href: '/', icon: Home },
@@ -64,7 +67,25 @@ const Header = () => {
     if (activeLink) {
       selectAnchor(activeLink);
     }
+
+    // Initialize mobile menu animation
+    if (mobileMenuRef.current) {
+      initExpandingCircles(mobileMenuRef.current);
+    }
   }, [location.pathname]);
+
+  const handleMobileMenuClick = () => {
+    if (!mobileMenuRef.current) return;
+    
+    const newState = !isMobileMenuActive;
+    setIsMobileMenuActive(newState);
+    
+    if (newState) {
+      activateExpandingCircles(mobileMenuRef.current);
+    } else {
+      deactivateExpandingCircles(mobileMenuRef.current);
+    }
+  };
 
   return (
     <>
@@ -141,7 +162,7 @@ const Header = () => {
       <motion.header
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="sticky top-0 z-50 backdrop-garden border-b border-border/20"
+        className="sticky top-0 z-50 backdrop-garden border-b border-border/20 header-curved-bottom"
       >
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
@@ -169,8 +190,10 @@ const Header = () => {
               ref={navRef}
               className="hidden md:block spotlight-nav relative h-11 rounded-full border border-border/25"
               onClick={(e) => {
-                if (e.target instanceof HTMLAnchorElement) {
-                  selectAnchor(e.target);
+                // Find the closest anchor element
+                const anchor = (e.target as Element).closest('a');
+                if (anchor) {
+                  selectAnchor(anchor as HTMLAnchorElement);
                 }
               }}
             >
@@ -219,6 +242,38 @@ const Header = () => {
                 style={{ filter: 'url(#ambience) brightness(2)' }}
               />
             </nav>
+
+            {/* Mobile Menu Button with Expanding Circles Animation */}
+            <div className="md:hidden">
+              <div className="menu-container cursor-pointer" onClick={handleMobileMenuClick}>
+                <div ref={mobileMenuRef} className="expanding-circles">
+                  <div className="circle"></div>
+                  <div className="circle"></div>
+                  <div className="circle"></div>
+                  <div className="circle"></div>
+                  <div className="circle"></div>
+                  <div className="circle"></div>
+                  <div className="circle extra"></div>
+                  <div className="circle extra"></div>
+                  <div className="circle extra"></div>
+                  <div className="circle extra"></div>
+                  <div className="circle extra"></div>
+                  <div className="circle extra"></div>
+                  <div className="circle micro"></div>
+                  <div className="circle micro"></div>
+                  <div className="circle micro"></div>
+                  <div className="circle micro"></div>
+                  <div className="circle micro"></div>
+                  <div className="circle micro"></div>
+                  <div className="circle micro"></div>
+                  <div className="circle micro"></div>
+                  <div className="circle micro"></div>
+                  <div className="circle micro"></div>
+                  <div className="circle micro"></div>
+                  <div className="circle micro"></div>
+                </div>
+              </div>
+            </div>
 
           {/* Wallet Connection */}
           <div className="flex items-center space-x-4">
