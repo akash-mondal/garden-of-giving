@@ -251,15 +251,7 @@
 
   /* Curved Header Bottom Border */
   .header-curved-bottom::after {
-    content: '';
-    position: absolute;
-    bottom: -20px;
-    left: 0;
-    right: 0;
-    height: 20px;
-    background: linear-gradient(135deg, hsl(var(--petal-pink)), hsl(var(--blush-cream)));
-    border-radius: 0 0 50% 50% / 0 0 100% 100%;
-    z-index: -1;
+    display: none;
   }
 
   /* Advanced Menu Animation Styles */
