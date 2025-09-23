@@ -793,6 +793,5 @@ const NewLanding = () => {
     </div>
   );
 };
-};
 
 export default NewLanding;
