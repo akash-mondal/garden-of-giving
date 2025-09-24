@@ -166,14 +166,19 @@ const Staking = () => {
                   </p>
                 </div>
                 
-                <button
+                <motion.button
                   onClick={handleStake}
                   disabled={!stakingAmount || parseFloat(stakingAmount) <= 0}
-                  className="w-full btn-garden-primary disabled:opacity-50 text-lg py-4"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="group w-full relative overflow-hidden bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary text-white font-nunito font-bold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-primary/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 >
-                  <Lock className="w-5 h-5 mr-2" />
-                  Stake Tokens
-                </button>
+                  <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 skew-x-12"></div>
+                  <div className="relative flex items-center justify-center space-x-2 text-lg">
+                    <Lock className="w-5 h-5" />
+                    <span>Stake Tokens</span>
+                  </div>
+                </motion.button>
               </div>
             </div>
 
@@ -246,23 +251,33 @@ const Staking = () => {
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4 mt-6">
-                  <button
+                  <motion.button
                     onClick={handleClaimRewards}
                     disabled={stakingData.pendingRewards <= 0}
-                    className="btn-garden-secondary disabled:opacity-50"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="group relative overflow-hidden bg-gradient-to-r from-green-500 to-emerald-600 hover:from-emerald-600 hover:to-green-500 text-white font-nunito font-semibold py-3 px-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-green-500/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                   >
-                    <Zap className="w-4 h-4 mr-2" />
-                    Claim Rewards
-                  </button>
+                    <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 skew-x-12"></div>
+                    <div className="relative flex items-center justify-center space-x-2">
+                      <Zap className="w-4 h-4" />
+                      <span>Claim Rewards</span>
+                    </div>
+                  </motion.button>
                   
                   {stakingData.stakedHeartTokens > 0 && (
-                    <button
+                    <motion.button
                       onClick={handleUnstake}
-                      className="btn-garden-secondary"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="group relative overflow-hidden bg-gradient-to-r from-orange-500 to-red-500 hover:from-red-500 hover:to-orange-500 text-white font-nunito font-semibold py-3 px-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-orange-500/30"
                     >
-                      <Unlock className="w-4 h-4 mr-2" />
-                      Unstake
-                    </button>
+                      <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 skew-x-12"></div>
+                      <div className="relative flex items-center justify-center space-x-2">
+                        <Unlock className="w-4 h-4" />
+                        <span>Unstake</span>
+                      </div>
+                    </motion.button>
                   )}
                 </div>
               </div>
