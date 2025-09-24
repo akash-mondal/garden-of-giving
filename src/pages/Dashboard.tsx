@@ -3,7 +3,7 @@ import { Heart, Trophy, TrendingUp, Calendar } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
 import GardenParticles from '../components/GardenParticles';
-import FlowerCanvas from '../components/FlowerCanvas';
+import FloatingFlowerParticles from '../components/FloatingFlowerParticles';
 import { formatAPT } from '../mockData';
 
 const Dashboard = () => {
@@ -31,6 +31,7 @@ const Dashboard = () => {
   return (
     <div className="relative min-h-screen py-8">
       <GardenParticles />
+      <FloatingFlowerParticles />
       
       <div className="container mx-auto px-4">
         {/* Header */}
@@ -55,9 +56,6 @@ const Dashboard = () => {
           className="h-48 md:h-64 lg:h-80 mb-6 md:mb-8 relative flex items-center justify-center"
         >
           <div className="text-center space-y-3 md:space-y-4">
-            <div className="h-32 md:h-40 lg:h-48 mb-3 md:mb-4 mx-auto">
-              <FlowerCanvas className="w-full h-full" />
-            </div>
             <p className="text-base md:text-lg font-caveat text-primary px-4">
               Your personal garden grows with every donation
             </p>
