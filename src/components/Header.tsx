@@ -6,6 +6,7 @@ import { gsap } from 'gsap';
 import { useWallet } from '../contexts/WalletContext';
 import { formatAPT } from '../mockData';
 import { initExpandingCircles, activateExpandingCircles, deactivateExpandingCircles } from '../utils/menuAnimations';
+import ThemeToggle from './ThemeToggle';
 
 const Header = () => {
   const { isConnected, isConnecting, currentUser, connect, disconnect } = useWallet();
@@ -275,8 +276,9 @@ const Header = () => {
               </div>
             </div>
 
-          {/* Wallet Connection */}
-          <div className="flex items-center space-x-4">
+            {/* Wallet Connection and Theme Toggle */}
+            <div className="flex items-center space-x-4">
+              <ThemeToggle />
             {!isConnected ? (
               <motion.button
                 onClick={handleWalletClick}
