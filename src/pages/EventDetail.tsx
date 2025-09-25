@@ -287,13 +287,40 @@ const EventDetail = () => {
                 Make Your Impact
               </h3>
               
-              <button
+              <motion.button
                 onClick={() => setDonationModalOpen(true)}
-                className="w-full btn-garden-primary mb-4"
+                whileHover={{ 
+                  scale: 1.02, 
+                  boxShadow: "0 20px 40px -10px hsl(var(--primary) / 0.4)",
+                }}
+                whileTap={{ scale: 0.98 }}
+                className="group relative w-full overflow-hidden rounded-2xl bg-gradient-to-r from-primary via-primary/90 to-primary/80 p-4 mb-4 transition-all duration-300 hover:from-primary/90 hover:via-primary hover:to-primary/90"
               >
-                <Heart className="w-5 h-5 mr-2" fill="currentColor" />
-                Donate Now
-              </button>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                <div className="relative flex items-center justify-center space-x-2 text-primary-foreground font-nunito font-bold text-lg">
+                  <motion.div
+                    whileHover={{ scale: 1.2, rotate: 10 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                  >
+                    <Heart className="w-6 h-6" fill="currentColor" />
+                  </motion.div>
+                  <span>Donate Now</span>
+                  <motion.div
+                    animate={{ 
+                      opacity: [0.5, 1, 0.5],
+                      scale: [1, 1.1, 1] 
+                    }}
+                    transition={{ 
+                      duration: 2, 
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                    className="text-yellow-300"
+                  >
+                    ✨
+                  </motion.div>
+                </div>
+              </motion.button>
               
               <div className="text-center space-y-2">
                 <p className="text-sm text-muted-foreground">

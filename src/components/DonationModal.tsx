@@ -95,11 +95,34 @@ const DonationModal: React.FC<DonationModalProps> = ({
           
           {/* Modal */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-md bg-card rounded-3xl shadow-[var(--shadow-garden)] border border-border overflow-hidden"
+            initial={{ 
+              opacity: 0, 
+              scale: 0.7, 
+              y: 50,
+              rotateX: 20,
+              rotateY: 10
+            }}
+            animate={{ 
+              opacity: 1, 
+              scale: 1, 
+              y: 0,
+              rotateX: 0,
+              rotateY: 0
+            }}
+            exit={{ 
+              opacity: 0, 
+              scale: 0.8, 
+              y: 30,
+              rotateX: -10
+            }}
+            transition={{ 
+              type: "spring", 
+              damping: 20, 
+              stiffness: 280,
+              duration: 0.6
+            }}
+            className="relative w-full max-w-md bg-card rounded-3xl shadow-[var(--shadow-garden)] border border-border overflow-hidden backdrop-blur-sm"
+            style={{ transformStyle: "preserve-3d" }}
           >
             {/* Close Button */}
             <button
@@ -114,36 +137,110 @@ const DonationModal: React.FC<DonationModalProps> = ({
               {step === 'amount' && (
                 <motion.div
                   key="amount"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
+                  initial={{ 
+                    opacity: 0, 
+                    x: 30,
+                    filter: "blur(10px)"
+                  }}
+                  animate={{ 
+                    opacity: 1, 
+                    x: 0,
+                    filter: "blur(0px)"
+                  }}
+                  exit={{ 
+                    opacity: 0, 
+                    x: -30,
+                    filter: "blur(5px)"
+                  }}
+                  transition={{ 
+                    duration: 0.4,
+                    ease: "easeOut"
+                  }}
                   className="p-6 space-y-6"
                 >
-                  <div className="text-center">
-                    <h2 className="text-2xl font-shadows text-foreground mb-2">
+                  <motion.div 
+                    className="text-center"
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <motion.h2 
+                      className="text-2xl font-shadows text-foreground mb-2"
+                      animate={{ 
+                        backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"]
+                      }}
+                      transition={{ 
+                        duration: 3, 
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                      style={{
+                        background: "linear-gradient(45deg, hsl(var(--foreground)), hsl(var(--primary)), hsl(var(--foreground)))",
+                        backgroundSize: "200% 200%",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent"
+                      }}
+                    >
                       Plant a Seed of Hope
-                    </h2>
-                    <p className="text-sm text-muted-foreground">
+                    </motion.h2>
+                    <motion.p 
+                      className="text-sm text-muted-foreground"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.4 }}
+                    >
                       for {event.eventName}
-                    </p>
-                  </div>
+                    </motion.p>
+                  </motion.div>
 
                   {/* Quick Amount Buttons */}
-                  <div className="grid grid-cols-3 gap-3">
-                    {quickAmounts.map((value) => (
-                      <button
+                  <motion.div 
+                    className="grid grid-cols-3 gap-3"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3, staggerChildren: 0.1 }}
+                  >
+                    {quickAmounts.map((value, index) => (
+                      <motion.button
                         key={value}
+                        initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        transition={{ 
+                          delay: 0.4 + index * 0.05,
+                          type: "spring",
+                          stiffness: 300,
+                          damping: 20
+                        }}
+                        whileHover={{ 
+                          scale: 1.05,
+                          y: -2,
+                          boxShadow: "0 8px 25px -8px hsl(var(--primary) / 0.3)"
+                        }}
+                        whileTap={{ scale: 0.95 }}
                         onClick={() => handleAmountSelect(value)}
-                        className={`p-3 rounded-2xl border-2 transition-all ${
+                        className={`group relative p-3 rounded-2xl border-2 transition-all duration-300 overflow-hidden ${
                           amount === value.toString()
                             ? 'border-primary bg-primary/10 text-primary'
-                            : 'border-border hover:border-primary/50'
+                            : 'border-border hover:border-primary/50 hover:bg-primary/5'
                         }`}
                       >
-                        <div className="font-nunito font-semibold">{value} APT</div>
-                      </button>
+                        {amount === value.toString() && (
+                          <motion.div
+                            layoutId="selected-amount"
+                            className="absolute inset-0 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5"
+                            initial={false}
+                            transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                          />
+                        )}
+                        <div className="relative font-nunito font-semibold">{value} APT</div>
+                        <motion.div
+                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full"
+                          animate={amount === value.toString() ? { translateX: ["100%", "-100%"] } : {}}
+                          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                        />
+                      </motion.button>
                     ))}
-                  </div>
+                  </motion.div>
 
                   {/* Custom Amount */}
                   <div className="space-y-2">
@@ -197,9 +294,28 @@ const DonationModal: React.FC<DonationModalProps> = ({
               {step === 'confirmation' && (
                 <motion.div
                   key="confirmation"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
+                  initial={{ 
+                    opacity: 0, 
+                    x: 40,
+                    rotateY: 20,
+                    filter: "blur(10px)"
+                  }}
+                  animate={{ 
+                    opacity: 1, 
+                    x: 0,
+                    rotateY: 0,
+                    filter: "blur(0px)"
+                  }}
+                  exit={{ 
+                    opacity: 0, 
+                    x: -40,
+                    rotateY: -20,
+                    filter: "blur(5px)"
+                  }}
+                  transition={{ 
+                    duration: 0.5,
+                    ease: "easeOut"
+                  }}
                   className="p-6 space-y-6"
                 >
                   <div className="text-center">
@@ -256,19 +372,69 @@ const DonationModal: React.FC<DonationModalProps> = ({
               {step === 'processing' && (
                 <motion.div
                   key="processing"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
+                  initial={{ 
+                    opacity: 0, 
+                    scale: 0.5,
+                    rotate: -180,
+                    filter: "blur(20px)"
+                  }}
+                  animate={{ 
+                    opacity: 1, 
+                    scale: 1,
+                    rotate: 0,
+                    filter: "blur(0px)"
+                  }}
+                  exit={{ 
+                    opacity: 0, 
+                    scale: 0.7,
+                    rotate: 180,
+                    filter: "blur(10px)"
+                  }}
+                  transition={{ 
+                    duration: 0.7,
+                    type: "spring",
+                    stiffness: 200,
+                    damping: 15
+                  }}
                   className="p-6 text-center space-y-6"
                 >
                   <div className="h-32 relative flex items-center justify-center">
                     <motion.div
-                      animate={{ scale: [1, 1.2, 1], rotate: [0, 180, 360] }}
-                      transition={{ duration: 2, repeat: Infinity }}
+                      animate={{ 
+                        scale: [1, 1.3, 0.9, 1.2, 1],
+                        rotate: [0, 180, 360, 540, 720],
+                        y: [0, -10, 5, -5, 0]
+                      }}
+                      transition={{ 
+                        duration: 3, 
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
                       className="text-6xl"
                     >
                       🌱
                     </motion.div>
+                    {/* Floating particles around the seed */}
+                    {[...Array(6)].map((_, i) => (
+                      <motion.div
+                        key={i}
+                        className="absolute text-2xl"
+                        animate={{
+                          x: [0, Math.cos(i * 60 * Math.PI / 180) * 40],
+                          y: [0, Math.sin(i * 60 * Math.PI / 180) * 40],
+                          opacity: [0, 1, 0],
+                          scale: [0, 1, 0]
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          delay: i * 0.3,
+                          ease: "easeInOut"
+                        }}
+                      >
+                        ✨
+                      </motion.div>
+                    ))}
                   </div>
 
                   <div className="space-y-4">
@@ -290,18 +456,85 @@ const DonationModal: React.FC<DonationModalProps> = ({
               {step === 'success' && (
                 <motion.div
                   key="success"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
+                  initial={{ 
+                    opacity: 0, 
+                    scale: 0.3,
+                    y: 100,
+                    rotateX: -90,
+                    filter: "blur(20px)"
+                  }}
+                  animate={{ 
+                    opacity: 1, 
+                    scale: 1,
+                    y: 0,
+                    rotateX: 0,
+                    filter: "blur(0px)"
+                  }}
+                  exit={{ 
+                    opacity: 0, 
+                    scale: 0.5,
+                    y: -50,
+                    rotateX: 90,
+                    filter: "blur(10px)"
+                  }}
+                  transition={{ 
+                    duration: 0.8,
+                    type: "spring",
+                    stiffness: 150,
+                    damping: 12
+                  }}
                   className="p-6 text-center space-y-6"
                 >
                   <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: "spring", delay: 0.2 }}
-                    className="w-20 h-20 bg-mint-soft rounded-full flex items-center justify-center mx-auto"
+                    initial={{ scale: 0, rotate: -180 }}
+                    animate={{ 
+                      scale: [0, 1.2, 0.9, 1.1, 1],
+                      rotate: [-180, 0, 10, -5, 0]
+                    }}
+                    transition={{ 
+                      type: "spring", 
+                      delay: 0.3,
+                      duration: 1.2,
+                      stiffness: 200,
+                      damping: 10
+                    }}
+                    className="relative w-20 h-20 bg-mint-soft rounded-full flex items-center justify-center mx-auto"
                   >
-                    <CheckCircle className="w-10 h-10 text-green-600" />
+                    <motion.div
+                      animate={{ 
+                        scale: [1, 1.1, 1],
+                        rotate: [0, 360]
+                      }}
+                      transition={{ 
+                        duration: 2, 
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    >
+                      <CheckCircle className="w-10 h-10 text-green-600" />
+                    </motion.div>
+                    {/* Success particles */}
+                    {[...Array(8)].map((_, i) => (
+                      <motion.div
+                        key={i}
+                        className="absolute text-lg"
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{
+                          opacity: [0, 1, 0],
+                          scale: [0, 1, 0],
+                          x: [0, Math.cos(i * 45 * Math.PI / 180) * 60],
+                          y: [0, Math.sin(i * 45 * Math.PI / 180) * 60],
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          delay: 0.5 + i * 0.1,
+                          ease: "easeOut"
+                        }}
+                      >
+                        🎉
+                      </motion.div>
+                    ))}
                   </motion.div>
 
                   <div className="space-y-2">
