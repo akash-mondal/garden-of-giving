@@ -1,19 +1,20 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { SupabaseService } from '@/services/supabaseService';
+import type { User as SupabaseUser, Session } from '@supabase/supabase-js';
 
 interface User {
   id: string;
   name: string;
-  email: string;
+  walletAddress: string;
   avatar?: string;
-  loginMethod: 'wallet' | 'google';
 }
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  loginWithWallet: () => Promise<void>;
-  loginWithGoogle: () => Promise<void>;
+  loginWithWallet: (signMessage: (message: string) => Promise<{ signature: string; publicKey: string; walletAddress: string }>) => Promise<void>;
   logout: () => void;
 }
 
@@ -27,84 +28,98 @@ export const useAuth = () => {
   return context;
 };
 
-// Mock user data
-const mockWalletUser: User = {
-  id: 'wallet-user-1',
-  name: 'Alex Thompson',
-  email: 'alex.thompson@example.com',
-  avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=alex',
-  loginMethod: 'wallet'
-};
-
-const mockGoogleUser: User = {
-  id: 'google-user-1', 
-  name: 'Sarah Chen',
-  email: 'sarah.chen@gmail.com',
-  avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=sarah',
-  loginMethod: 'google'
-};
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  // Initialize state with default values to avoid null issues
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [session, setSession] = useState<Session | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Check for existing session on mount
+  // Initialize auth state and set up listener
   useEffect(() => {
-    try {
-      const savedUser = localStorage.getItem('auth_user');
-      if (savedUser) {
-        const parsedUser = JSON.parse(savedUser);
-        if (parsedUser && parsedUser.id) {
-          setUser(parsedUser);
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        setSession(session);
+        
+        if (session?.user) {
+          try {
+            const walletAddress = session.user.user_metadata?.wallet_address;
+            if (walletAddress) {
+              const profile = await SupabaseService.getProfileByWalletAddress(walletAddress);
+              if (profile) {
+                setUser({
+                  id: profile.id,
+                  name: profile.name || `User ${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`,
+                  walletAddress: profile.wallet_address,
+                  avatar: profile.avatar_url || undefined
+                });
+              }
+            }
+          } catch (error) {
+            console.error('Error fetching user profile:', error);
+          }
+        } else {
+          setUser(null);
         }
+        
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error('Error parsing saved user:', error);
-      localStorage.removeItem('auth_user');
-    }
+    );
+
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (!session) {
+        setIsLoading(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  const loginWithWallet = async (): Promise<void> => {
+  const loginWithWallet = async (
+    signMessage: (message: string) => Promise<{ signature: string; publicKey: string; walletAddress: string }>
+  ): Promise<void> => {
     try {
       setIsLoading(true);
       
-      // Simulate wallet connection delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Request sign-in message from Edge Function
+      const { message } = await SupabaseService.requestSignInMessage();
       
-      setUser(mockWalletUser);
-      localStorage.setItem('auth_user', JSON.stringify(mockWalletUser));
+      // Get signature from wallet
+      const { signature, publicKey, walletAddress } = await signMessage(message);
+      
+      // Verify signature with Edge Function
+      const { success } = await SupabaseService.verifySignature({
+        publicKey,
+        signature,
+        message,
+        walletAddress
+      });
+
+      if (success) {
+        // The auth state will be updated by the onAuthStateChange listener
+        console.log('Wallet login successful');
+      } else {
+        throw new Error('Signature verification failed');
+      }
     } catch (error) {
       console.error('Wallet login error:', error);
+      throw error;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const loginWithGoogle = async (): Promise<void> => {
+  const logout = async (): Promise<void> => {
     try {
-      setIsLoading(true);
-      
-      // Simulate Google OAuth delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      setUser(mockGoogleUser);
-      localStorage.setItem('auth_user', JSON.stringify(mockGoogleUser));
-    } catch (error) {
-      console.error('Google login error:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const logout = (): void => {
-    try {
+      await supabase.auth.signOut();
       setUser(null);
-      localStorage.removeItem('auth_user');
+      setSession(null);
     } catch (error) {
       console.error('Logout error:', error);
     }
@@ -112,10 +127,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const value: AuthContextType = {
     user,
-    isAuthenticated: Boolean(user),
+    isAuthenticated: Boolean(user && session),
     isLoading,
     loginWithWallet,
-    loginWithGoogle,
     logout,
   };
 

@@ -14,7 +14,114 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      campaigns: {
+        Row: {
+          created_at: string
+          creator_address: string
+          description: string | null
+          end_timestamp: string
+          goal_amount: number
+          id: string
+          image_url: string | null
+          name: string
+          object_address: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          creator_address: string
+          description?: string | null
+          end_timestamp: string
+          goal_amount: number
+          id?: string
+          image_url?: string | null
+          name: string
+          object_address: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          creator_address?: string
+          description?: string | null
+          end_timestamp?: string
+          goal_amount?: number
+          id?: string
+          image_url?: string | null
+          name?: string
+          object_address?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      donations: {
+        Row: {
+          amount: number
+          campaign_id: string
+          created_at: string
+          donor_id: string
+          id: string
+          transaction_hash: string
+        }
+        Insert: {
+          amount: number
+          campaign_id: string
+          created_at?: string
+          donor_id: string
+          id?: string
+          transaction_hash: string
+        }
+        Update: {
+          amount?: number
+          campaign_id?: string
+          created_at?: string
+          donor_id?: string
+          id?: string
+          transaction_hash?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "donations_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "donations_donor_id_fkey"
+            columns: ["donor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          id: string
+          name: string | null
+          updated_at: string
+          wallet_address: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          id?: string
+          name?: string | null
+          updated_at?: string
+          wallet_address: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          id?: string
+          name?: string | null
+          updated_at?: string
+          wallet_address?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

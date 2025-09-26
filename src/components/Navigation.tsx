@@ -130,7 +130,7 @@ const Navigation = () => {
                             )}
                             <div>
                               <p className="font-nunito font-medium text-foreground">{user.name}</p>
-                              <p className="text-xs text-muted-foreground">{user.email}</p>
+                              <p className="text-xs text-muted-foreground">{user.walletAddress}</p>
                             </div>
                           </div>
                           <Button 
@@ -180,9 +180,9 @@ const Navigation = () => {
                     <div className="flex items-center justify-start gap-2 p-2">
                       <div className="flex flex-col space-y-1 leading-none">
                         <p className="font-medium">{user?.name}</p>
-                        <p className="text-xs text-muted-foreground">{user?.email}</p>
-                        <p className="text-xs text-muted-foreground capitalize">
-                          via {user?.loginMethod}
+                        <p className="text-xs text-muted-foreground">{user?.walletAddress}</p>
+                        <p className="text-xs text-muted-foreground">
+                          via Wallet
                         </p>
                       </div>
                     </div>

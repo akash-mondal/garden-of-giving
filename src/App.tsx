@@ -14,6 +14,7 @@ import Login from "./pages/Login";
 import Badges from "./pages/Badges";
 import Staking from "./pages/Staking";  
 import Governance from "./pages/Governance";
+import CampaignManager from "./pages/CampaignManager";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,11 @@ const AppContent = () => {
           />
           <Route path="/marketplace" element={<Marketplace />} />
           <Route path="/event/:eventAddress" element={<EventDetail />} />
+          <Route path="/campaigns" element={
+            <ProtectedRoute requireAuth redirectTo="/login">
+              <CampaignManager />
+            </ProtectedRoute>
+          } />
           <Route 
             path="/dashboard" 
             element={
